@@ -66,7 +66,7 @@ function dhar_recursive!(g::ChipFiringGraph, d::Divisor, source::Int, burned::Ve
 end
 
 """
-    dhar(g::ChipFiringGraph, divisor::Vector{Int}, source::Int)
+    dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
 
 Performs a recursive burn starting from a `source` vertex to determine if a `divisor`
 is super-stable with respect to that source.
@@ -77,13 +77,13 @@ it to already-burnt vertices.
 
 # Arguments
 - `g::ChipFiringGraph`: The graph structure.
-- `divisor::Vector{Int}`: The chip configuration to test.
+- `divisor::Divisor`: Input divisor.
 - `source::Int`: The vertex (1-indexed) from which to start the burn.
 
 # Returns
-- A tuple `(is_superstable, legals)` where:
+- A tuple `is_superstable, legals` where:
     - `is_superstable::Bool`: `true` if the entire graph was burned.
-    - `legals::Vector{Int}`: The indices of unburned ("legal") vertices.
+    - `legals::Vector{Int}`: The indices of unburned vertices that form a legal firing.
 """
 function dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
     n = g.num_vertices
@@ -99,7 +99,7 @@ function dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
 end
 
 """
-    q_reduced(g::ChipFiringGraph, divisor::Vector{Int}; q::Int=g.num_vertices, mutate::Bool=false)
+    q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int)
 
 Finds an equivalent, q-reduced effective divisor to the one given, based on the algorithm
 from the user-provided Python code.
@@ -110,15 +110,14 @@ from the user-provided Python code.
 - `q`: The sink vertex.
 
 # Returns
-- A tuple `(success, final_divisor)` where:
-    - `final_divisor::Union{Vector{Int}, Nothing}`: The resulting divisor
+- `d::Vector{Int}`: The resulting divisor
 """
 function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int)
 
     d = deepcopy(divisor)
 
     # Stage 1: Benevolence : can have some performance improvements in two ways 1) debt-reduction trick. 2) keep track of negative nodes
-    
+
     while any([(i != q && d.chips[i] < 0) for i in 1:g.num_vertices])
         # Fire all non-sink stable vertices
         for i in 1:g.num_vertices

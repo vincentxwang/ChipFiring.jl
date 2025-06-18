@@ -13,11 +13,9 @@ function degree(g::ChipFiringGraph, v::Int)
 end
 
 """
-    lend!(g::ChipFiringGraph, v::Int)
+    lend!(g::ChipFiringGraph, d::Divisor, v::Int)
 
-Lends (fires) a single vertex `v`. This function modifies the `g.chips` vector in-place.
-The vertex `v` loses a number of chips equal to its degree, and each neighbor `j`
-gains a number of chips equal to the number of edges between `v` and `j`.
+Lends (fires) a single vertex `v`.
 """
 function lend!(g::ChipFiringGraph, d::Divisor, v::Int)
     deg_v = degree(g, v)
@@ -32,11 +30,9 @@ function lend!(g::ChipFiringGraph, d::Divisor, v::Int)
 end
 
 """
-    lend!(g::ChipFiringGraph, vertices::Vector{Int})
+    lend!(g::ChipFiringGraph, d::Divisor, vertices::Vector{Int})
 
-Lends (fires) from each vertex in the provided vector. This function modifies
-the `g.chips` vector in-place by calling `fire_vertex!` for each vertex in the
-`vertices_to_lend` vector.
+Lends (fires) from each vertex in the provided vector.
 """
 function lend!(g::ChipFiringGraph, d::Divisor, vertices::Vector{Int})
     for v in vertices
@@ -45,11 +41,9 @@ function lend!(g::ChipFiringGraph, d::Divisor, vertices::Vector{Int})
 end
 
 """
-    borrow!(g::ChipFiringGraph, v::Int)
+    borrow!(g::ChipFiringGraph, d::Divisor, v::Int)
 
-Borrows from a single vertex `v`. This function modifies the `g.chips` vector in-place.
-The vertex `v` loses a number of chips equal to its degree, and each neighbor `j`
-gains a number of chips equal to the number of edges between `v` and `j`.
+Borrows from a single vertex `v`.
 """
 function borrow!(g::ChipFiringGraph, d::Divisor, v::Int)
     deg_v = degree(g, v)
