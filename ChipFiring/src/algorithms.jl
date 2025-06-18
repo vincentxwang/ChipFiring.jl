@@ -1,0 +1,157 @@
+"""
+    compute_gonality(g::ChipFiringGraph; max_d=nothing, verbose=false) -> Int
+
+Computes the gonality of a graph `g`.
+
+This is done by finding the smallest degree `d` for which there exists an effective
+divisor `D` of degree `d` with rank at least 1.
+
+# Arguments
+- `g::ChipFiringGraph`: The graph to analyze.
+- `max_d=nothing`: (Optional) The maximum degree `d` to check. Defaults to `nv(g)`.
+- `verbose=false`: (Optional) If `true`, prints progress updates.
+
+# Returns
+- `Int`: The computed gonality of the graph. Returns -1 if not found within `max_d`.
+"""
+function compute_gonality(g::ChipFiringGraph; max_d=nothing, verbose=false)
+    n = g.num_vertices
+    max_degree_to_check = isnothing(max_d) ? n : max_d
+
+    for d in 1:max_degree_to_check
+        if verbose; println("Testing degree d = $d..."); end
+        
+        divisors_to_check = generate_effective_divisors(n, d)
+        if verbose; println("  Found $(length(divisors_to_check)) divisors to check for rank >= 1."); end
+
+        for D in divisors_to_check
+            if has_rank_at_least_one(g, D)
+                if verbose; println("  SUCCESS: Found divisor D = $D of degree $d with r(D) >= 1."); end
+                return d
+            end
+        end
+    end
+    
+    return -1 # Gonality not found within the checked range
+end
+
+
+"""
+    dhar_recursive!(g, divisor, source, burned)
+
+Internal recursive helper for the `dhar` algorithm. It explores the graph from
+the `source` vertex, modifying the `burned` vector in-place.
+"""
+function dhar_recursive!(g::ChipFiringGraph, d::Divisor, source::Int, burned::Vector{Bool})
+    
+    neighbors_of_source = findall(x -> x > 0, g.graph[source, :])
+
+    for v in neighbors_of_source
+        if burned[v]
+            continue 
+        end
+
+        threats = 0
+        for b in 1:g.num_vertices
+            if burned[b]
+                threats += get_num_edges(g, v, b)
+            end
+        end
+
+        if d.chips[v] < threats
+            burned[v] = true
+            dhar_recursive!(g, d, v, burned)
+        end
+    end
+end
+
+"""
+    dhar(g::ChipFiringGraph, divisor::Vector{Int}, source::Int)
+
+Performs a recursive burn starting from a `source` vertex to determine if a `divisor`
+is super-stable with respect to that source.
+
+Following the user's definition, a divisor is super-stable if the entire graph burns.
+A vertex `v` "burns" if its number of chips is less than the number of edges connecting
+it to already-burnt vertices.
+
+# Arguments
+- `g::ChipFiringGraph`: The graph structure.
+- `divisor::Vector{Int}`: The chip configuration to test.
+- `source::Int`: The vertex (1-indexed) from which to start the burn.
+
+# Returns
+- A tuple `(is_superstable, legals)` where:
+    - `is_superstable::Bool`: `true` if the entire graph was burned.
+    - `legals::Vector{Int}`: The indices of unburned ("legal") vertices.
+"""
+function dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
+    n = g.num_vertices
+    burned = fill(false, n)
+    burned[source] = true
+
+    dhar_recursive!(g, divisor, source, burned)
+
+    is_superstable = all(burned)
+    legals = findall(.!burned)
+
+    return is_superstable, legals
+end
+
+"""
+    q_reduced(g::ChipFiringGraph, divisor::Vector{Int}; q::Int=g.num_vertices, mutate::Bool=false)
+
+Finds an equivalent, q-reduced effective divisor to the one given, based on the algorithm
+from the user-provided Python code.
+
+# Arguments
+- `g`: The graph structure.
+- `divisor`: The initial chip configuration.
+- `q`: The sink vertex.
+
+# Returns
+- A tuple `(success, final_divisor)` where:
+    - `final_divisor::Union{Vector{Int}, Nothing}`: The resulting divisor
+"""
+function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int)
+
+    d = deepcopy(divisor)
+
+    # Stage 1: Benevolence : can have some performance improvements in two ways 1) debt-reduction trick. 2) keep track of negative nodes
+    
+    while any([(i != q && d.chips[i] < 0) for i in 1:g.num_vertices])
+        # Fire all non-sink stable vertices
+        for i in 1:g.num_vertices
+            if i == q; continue; end
+            if d.chips[i] < 0
+                borrow!(g, d, i)
+            end
+        end
+    end
+
+
+    # Stage 2: Relief
+    isSuperstable, legals = dhar(g, d, q)
+    while d.chips[q] < 0 && !isSuperstable
+        lend!(g, d, legals)
+        isSuperstable, legals = dhar(g, d, q)
+    end
+
+    return d
+end
+
+"""
+    is_winnable(g::ChipFiringGraph, d::Divisor) -> Bool
+
+Checks if a chip configuration is linearly equivalent to an
+effective divisor using a version of Dhar's burning algorithm.
+"""
+function is_winnable(g::ChipFiringGraph, d::Divisor)
+    q = 1
+    q_red = q_reduced(g, d, q)
+    if q_red.chips[q] >= 0
+        return true
+    else
+        return false
+    end
+end
