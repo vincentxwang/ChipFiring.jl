@@ -17,12 +17,12 @@ over neighbors.
   of a connection but does not account for edge multiplicity.
 """
 struct ChipFiringGraph
-    graph::Matrix{Int8}
-    num_vertices::Int8
-    num_edges::Int16
-    adj_list::Vector{Vector{Int8}}
-    edge_list::Vector{Tuple{Int8, Int8}}
-    degree_list::Vector{Int8}
+    graph::Matrix{Int}
+    num_vertices::Int
+    num_edges::Int
+    adj_list::Vector{Vector{Int}}
+    edge_list::Vector{Tuple{Int, Int}}
+    degree_list::Vector{Int}
 
 
     """
@@ -50,7 +50,7 @@ struct ChipFiringGraph
         end
 
         adj_list = [Int[] for _ in 1:num_vertices]
-        edge_list = Tuple{Int8, Int8}[]
+        edge_list = Tuple{Int, Int}[]
 
         for i in 1:num_vertices
             for j in 1:num_vertices
