@@ -17,11 +17,12 @@ over neighbors.
   of a connection but does not account for edge multiplicity.
 """
 struct ChipFiringGraph
-    graph::Matrix{Int}
-    num_vertices::Int
-    num_edges::Int
-    adj_list::Vector{Vector{Int}}
-    degree_list::Vector{Int}
+    graph::Matrix{Int8}
+    num_vertices::Int8
+    num_edges::Int16
+    adj_list::Vector{Vector{Int8}}
+    edge_list::Vector{Tuple{Int8, Int8}}
+    degree_list::Vector{Int8}
 
 
     """
@@ -41,30 +42,41 @@ struct ChipFiringGraph
         num_vertices = size(multiplicity_matrix, 1)
         num_edges = sum(multiplicity_matrix)/2
 
-        if size(multiplicity_matrix, 2) != n
+        if size(multiplicity_matrix, 2) != num_vertices
             error("Multiplicity matrix must be square.")
         end
         if any(multiplicity_matrix .!= multiplicity_matrix')
             error("Multiplicity matrix is not symmetric. The graph will be treated as directed.")
         end
 
-        adj_list = [Int[] for _ in 1:n]
+        adj_list = [Int[] for _ in 1:num_vertices]
+        edge_list = Tuple{Int8, Int8}[]
 
-        for i in 1:n
-            for j in 1:n
+        for i in 1:num_vertices
+            for j in 1:num_vertices
                 if multiplicity_matrix[i,j] != 0
                     push!(adj_list[i], j)
+                    push!(edge_list, (i,j))
                 end
             end
         end
 
-        deg_list = [0 for _ in 1:n]
+        deg_list = [0 for _ in 1:num_vertices]
 
-        for i in 1:n
+        for i in 1:num_vertices
             deg_list[i] = sum(multiplicity_matrix[i, :])
         end
         
-        new(multiplicity_matrix, num_vertices, num_edges, adj_list, deg_list)
+        new(multiplicity_matrix, num_vertices, num_edges, adj_list, edge_list, deg_list)
+    end
+
+    function ChipFiringGraph(num_vertices::Int, edge_list::Vector{Tuple{Int, Int}})
+        multiplicity_matrix = zeros(Int8, num_vertices, num_vertices)
+        for (a,b) in edge_list
+            multiplicity_matrix[a,b] += 1
+            multiplicity_matrix[b,a] += 1
+        end
+        ChipFiringGraph(multiplicity_matrix)
     end
 end
 

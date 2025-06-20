@@ -8,7 +8,7 @@ of a given total degree.
 
 """
 function generate_effective_divisors(num_vertices, degree)
-    return Divisor.(collect(multiexponents(num_vertices, degree)))
+    return Divisor.(collect(multiexponents(num_vertices, convert(Int64, degree))))
 end 
 
 """
