@@ -86,7 +86,7 @@ function dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
 
     threats = fill(0, n)
 
-    for b in 1:g.num_vertices
+    for b in g.adj_list[source]
         threats[b] += get_num_edges(g, source, b)
     end
     
