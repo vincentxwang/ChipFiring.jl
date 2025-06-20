@@ -18,11 +18,11 @@ Internal helper for `compute_gonality`. Checks if a divisor `D` has rank at leas
 """
 function has_rank_at_least_one(g::ChipFiringGraph, d::Divisor)
     for v in 1:g.num_vertices
-        test_divisor = deepcopy(d)
-        test_divisor.chips[v] -= 1
-        if !is_winnable(g, test_divisor)
+        d.chips[v] -= 1
+        if !is_winnable(g, d)
             return false
         end
+        d.chips[v] += 1
     end
     return true
 end

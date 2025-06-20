@@ -118,14 +118,12 @@ function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int)
 
     # Stage 1: Benevolence : can have some performance improvements in two ways 1) debt-reduction trick. 2) keep track of negative nodes
 
-    while any([(i != q && d.chips[i] < 0) for i in 1:g.num_vertices])
+    firing_set = find_negative_vertices(g, d, q)
+
+    while !isempty(firing_set)
         # Fire all non-sink stable vertices
-        for i in 1:g.num_vertices
-            if i == q; continue; end
-            if d.chips[i] < 0
-                borrow!(g, d, i)
-            end
-        end
+        borrow!(g, d, firing_set)
+        firing_set = find_negative_vertices(g, d, q)
     end
 
 
@@ -137,6 +135,10 @@ function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int)
     end
 
     return d
+end
+
+function find_negative_vertices(g::ChipFiringGraph, d::Divisor, q::Int)
+    return [i for i in 1:g.num_vertices if (i != q && d.chips[i] < 0)]
 end
 
 """

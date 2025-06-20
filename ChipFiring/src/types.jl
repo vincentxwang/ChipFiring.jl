@@ -20,6 +20,7 @@ struct ChipFiringGraph
     graph::Matrix{Int}
     num_vertices::Int
     adj_list::Vector{Vector{Int}}
+    degree_list::Vector{Int}
 
 
     """
@@ -53,8 +54,14 @@ struct ChipFiringGraph
                 end
             end
         end
+
+        deg_list = [0 for _ in 1:n]
+
+        for i in 1:n
+            deg_list[i] = sum(multiplicity_matrix[i, :])
+        end
         
-        new(multiplicity_matrix, n, adj_list)
+        new(multiplicity_matrix, n, adj_list, deg_list)
     end
 end
 

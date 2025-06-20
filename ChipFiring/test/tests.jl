@@ -262,11 +262,7 @@ end
 @profview profile_test()
 
 
-g_house = ChipFiringGraph(house_adj_matrix)
-
-divisor = Divisor([1, 0, -1, -2, 3])
-@btime q_reduced(g_house, divisor, 1).chips 
-@btime compute_gonality(g_house)
+@btime profile_test()
 
 @testset "for fun" begin
     adj = [
