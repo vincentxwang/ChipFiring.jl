@@ -10,7 +10,7 @@ function lend!(g::ChipFiringGraph, d::Divisor, v::Int)
     d.chips[v] -= deg_v
 
     # Distribute chips to neighbors
-    for j in 1:g.num_vertices
+    for j in g.adj_list[v]
         d.chips[j] += g.graph[v, j]
     end
 end
@@ -38,7 +38,7 @@ function borrow!(g::ChipFiringGraph, d::Divisor, v::Int)
     d.chips[v] += deg_v
 
     # Distribute chips to neighbors
-    for j in 1:g.num_vertices
+    for j in g.adj_list[v]
         d.chips[j] -= g.graph[v, j]
     end
 end

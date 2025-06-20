@@ -19,6 +19,7 @@ over neighbors.
 struct ChipFiringGraph
     graph::Matrix{Int}
     num_vertices::Int
+    num_edges::Int
     adj_list::Vector{Vector{Int}}
     degree_list::Vector{Int}
 
@@ -37,7 +38,9 @@ struct ChipFiringGraph
     - Throws an error if the matrix is not symmetric.
     """
     function ChipFiringGraph(multiplicity_matrix::Matrix{Int})
-        n = size(multiplicity_matrix, 1)
+        num_vertices = size(multiplicity_matrix, 1)
+        num_edges = sum(multiplicity_matrix)/2
+
         if size(multiplicity_matrix, 2) != n
             error("Multiplicity matrix must be square.")
         end
@@ -61,7 +64,7 @@ struct ChipFiringGraph
             deg_list[i] = sum(multiplicity_matrix[i, :])
         end
         
-        new(multiplicity_matrix, n, adj_list, deg_list)
+        new(multiplicity_matrix, num_vertices, num_edges, adj_list, deg_list)
     end
 end
 

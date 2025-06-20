@@ -1,33 +1,13 @@
-push!(LOAD_PATH, "/Users/vincentwang/Documents/ChipFiring.jl")
-
-using ChipFiring
-
-println("--- Using the ChipFiring Package ---")
-
-# 3. Create a graph
-# A simple 4-vertex cycle graph
-multiplicity_matrix = [
-    0 1 0 1;
-    1 0 1 0;
-    0 1 0 1;
-    1 0 1 0
+tricycle_adj_matrix =[
+    0 2 2 0 1 0;
+    2 0 2 1 2 0;
+    2 2 0 0 0 0;
+    0 1 0 0 2 2;
+    1 2 0 2 0 2;
+    0 0 0 2 2 0;    
 ]
-initial_chips = [3, 1, 0, 0] # An unstable configuration
 
-# The main constructor from your package
-g = ChipFiringGraph(multiplicity_matrix, initial_chips)
+g = ChipFiringGraph(tricycle_adj_matrix)
 
-println("\nInitial configuration:")
-println("Chips: ", g.chips)
-
-# 4. Call functions from the package
-println("\nStabilizing the graph...")
-stabilize!(g, verbose=false)
-
-println("\nFinal stable configuration:")
-println("Chips: ", g.chips)
-
-# You can also compute properties like gonality
-println("\nComputing gonality...")
-gon = compute_gonality(g)
-println("The gonality of this graph is: ", gon)
+# The gonality of the tricycle graph is 6 (https://arxiv.org/pdf/2106.12568)
+@test compute_gonality(g, max_d=9, verbose=true) == 6
