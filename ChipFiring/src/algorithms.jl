@@ -42,25 +42,19 @@ end
 Internal recursive helper for the `dhar` algorithm. It explores the graph from
 the `source` vertex, modifying the `burned` vector in-place.
 """
-function dhar_recursive!(g::ChipFiringGraph, d::Divisor, source::Int, burned::Vector{Bool})
+function dhar_recursive!(g::ChipFiringGraph, d::Divisor, source::Int, burned::Vector{Bool}, threats::Vector{Int})
     
-    neighbors_of_source = findall(x -> x > 0, g.graph[source, :])
-
-    for v in neighbors_of_source
+    for v in g.adj_list[source]
         if burned[v]
             continue 
         end
 
-        threats = 0
-        for b in 1:g.num_vertices
-            if burned[b]
-                threats += get_num_edges(g, v, b)
-            end
-        end
-
-        if d.chips[v] < threats
+        if d.chips[v] < threats[v]
             burned[v] = true
-            dhar_recursive!(g, d, v, burned)
+            for b in 1:g.num_vertices
+                threats[b] += get_num_edges(g, v, b)
+            end
+            dhar_recursive!(g, d, v, burned, threats)
         end
     end
 end
@@ -90,7 +84,13 @@ function dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
     burned = fill(false, n)
     burned[source] = true
 
-    dhar_recursive!(g, divisor, source, burned)
+    threats = fill(0, n)
+
+    for b in 1:g.num_vertices
+        threats[b] += get_num_edges(g, source, b)
+    end
+    
+    dhar_recursive!(g, divisor, source, burned, threats)
 
     is_superstable = all(burned)
     legals = findall(.!burned)

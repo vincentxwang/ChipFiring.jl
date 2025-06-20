@@ -7,13 +7,13 @@ A mutable struct representing a chip-firing multigraph.
 - `graph::Matrix{Int}`: An `n x n` multiplicity matrix where `graph[i, j]` is the 
   number of edges between vertex `i` and `j`. The graph is assumed to be undirected,
   so this matrix should be symmetric.
-- `chips::Vector{Int}`: An `n`-element vector where `chips[i]` is the number
-  of chips on vertex `i`.
 - `num_vertices::Int`: The number of vertices in the graph, `n`.
 """
 struct ChipFiringGraph
     graph::Matrix{Int}
     num_vertices::Int
+    adj_list::Vector{Vector{Int}}
+
 
     """
         ChipFiringGraph(multiplicity_matrix::Matrix{Int})
@@ -28,7 +28,18 @@ struct ChipFiringGraph
         if any(multiplicity_matrix .!= multiplicity_matrix')
             error("Multiplicity matrix is not symmetric. The graph will be treated as directed.")
         end
-        new(multiplicity_matrix, n)
+
+        adj_list = [Int[] for _ in 1:n]
+
+        for i in 1:n
+            for j in 1:n
+                if multiplicity_matrix[i,j] != 0
+                    push!(adj_list[i], j)
+                end
+            end
+        end
+        
+        new(multiplicity_matrix, n, adj_list)
     end
 end
 
