@@ -8,7 +8,7 @@ divisor `D` of degree `d` with rank at least 1.
 
 # Arguments
 - `g::ChipFiringGraph`: The graph to analyze.
-- `max_d=nothing`: (Optional) The maximum degree `d` to check. Defaults to `nv(g)`.
+- `max_d=nothing`: (Optional) The maximum degree `d` to check. Defaults to `nothing`.
 - `verbose=false`: (Optional) If `true`, prints progress updates.
 
 # Returns

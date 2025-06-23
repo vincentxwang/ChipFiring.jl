@@ -1,20 +1,33 @@
+Julia
+
 """
     ChipFiringGraph
 
-A struct to represent the static topology of a chip-firing graph.
+A structure to represent the underlying graph of a chip-firing graph.
 
-This structure holds dual representations for convenience: a dense multiplicity matrix
-for edge-count lookups and a performance-oriented adjacency list for iterating
-over neighbors.
+This struct provides multiple representations of the graph's structure to suit different
+computational needs. It is designed for undirected graphs, and the input multiplicity
+matrix is expected to be symmetric.
 
 # Fields
-- `graph::Matrix{Int}`: The `n x n` multiplicity matrix. `graph[i, j]` stores the
-  number of edges connecting vertex `i` and vertex `j`.
-- `num_vertices::Int`: The total number of vertices, `n`.
-- `adj_list::Vector{Vector{Int}}`: An adjacency list derived from the `graph` matrix.
-  `adj_list[i]` contains a vector of vertex `i`'s neighbors.
-  **Note**: This list represents the *underlying simple graph*. It records the existence
-  of a connection but does not account for edge multiplicity.
+- `graph::Matrix{Int}`: The `n x n` multiplicity matrix, where `graph[i, j]` is the
+  number of edges between vertex `i` and vertex `j`.
+- `num_vertices::Int`: The number of vertices in the graph, `n`.
+- `num_edges::Int`: The total number of edges in the graph.
+- `adj_list::Vector{Vector{Int}}`: An adjacency list where `adj_list[i]` contains the
+  neighbors of vertex `i`. This represents the underlying simple graph, meaning
+  each neighbor appears only once, regardless of edge multiplicity.
+- `edge_list::Vector{Tuple{Int, Int}}`: A vector of tuples, where each tuple `(i, j)`
+  represents an edge. Edges are included with their full multiplicity.
+- `degree_list::Vector{Int}`: A vector where `degree_list[i]` stores the degree of
+  vertex `i`, accounting for edge multiplicity.
+
+# Constructors
+- `ChipFiringGraph(multiplicity_matrix::Matrix{Int})`: Constructs a `ChipFiringGraph`
+  from a square, symmetric multiplicity matrix. Throws an error if the matrix is not
+  square or not symmetric.
+- `ChipFiringGraph(num_vertices::Int, edge_list::Vector{Tuple{Int, Int}})`: Constructs
+  a `ChipFiringGraph` from a list of edges and the total number of vertices.
 """
 struct ChipFiringGraph
     graph::Matrix{Int}
@@ -25,19 +38,6 @@ struct ChipFiringGraph
     degree_list::Vector{Int}
 
 
-    """
-        ChipFiringGraph(multiplicity_matrix::Matrix{Int})
-
-    Constructor for a `ChipFiringGraph`. The input graph should be symmetric.
-    
-    # Arguments
-    - `multiplicity_matrix::Matrix{Int}`: A square, symmetric matrix where `[i, j]`
-      is the number of edges between vertices `i` and `j`.
-
-    # Errors
-    - Throws an error if the matrix is not square.
-    - Throws an error if the matrix is not symmetric.
-    """
     function ChipFiringGraph(multiplicity_matrix::Matrix{Int})
         num_vertices = size(multiplicity_matrix, 1)
         num_edges = sum(multiplicity_matrix)/2
