@@ -3,7 +3,7 @@ using Test
 
 @testset "ChipFiring.jl Tests" begin
 
-    @testset "degree" begin
+    @testset "basic checks" begin
         #   1 == 2
         #   |    |
         #   4 -- 3
@@ -15,10 +15,10 @@ using Test
         ]
         g = ChipFiringGraph(multiplicity_matrix)
 
-        @test degree(g, 1) == 3
-        @test degree(g, 2) == 3
-        @test degree(g, 3) == 2
-        @test degree(g, 4) == 2
+
+        @test g.degree_list == [3,3,2,2]
+        @test length(g.edge_list) == 5
+        @test g.num_edges == 5
     end
 
     @testset "lend 1 (line)" begin

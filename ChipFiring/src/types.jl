@@ -55,8 +55,14 @@ struct ChipFiringGraph
         for i in 1:num_vertices
             for j in 1:num_vertices
                 if multiplicity_matrix[i,j] != 0
+                    # Add to adjacency list for both vertices
                     push!(adj_list[i], j)
-                    push!(edge_list, (i,j))
+                    if i < j
+                        # Add to edges list once (but a certain number of times!)
+                        for _ in 1:multiplicity_matrix[i,j]
+                            push!(edge_list, (i,j))
+                        end
+                    end
                 end
             end
         end
@@ -71,7 +77,7 @@ struct ChipFiringGraph
     end
 
     function ChipFiringGraph(num_vertices::Int, edge_list::Vector{Tuple{Int, Int}})
-        multiplicity_matrix = zeros(Int8, num_vertices, num_vertices)
+        multiplicity_matrix = zeros(Int, num_vertices, num_vertices)
         for (a,b) in edge_list
             multiplicity_matrix[a,b] += 1
             multiplicity_matrix[b,a] += 1
