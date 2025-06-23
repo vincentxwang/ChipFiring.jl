@@ -2,10 +2,6 @@
 
 # LOVE http://combos.org/nauty. generates all graphs. 
 
-
-
-
-# returns true if we save gonality!
 function save_gon(g::ChipFiringGraph)
     gon1 = compute_gonality(g)
     gon2 = compute_gonality(subdivide(g, 2), max_d= gon1 - 1)
@@ -57,11 +53,12 @@ function process_multigraph_expansions(simple_graph::ChipFiringGraph, max_multip
     n = simple_graph.num_vertices
     unique_edges = collect(Set(simple_graph.edge_list))
     num_unique_edges = length(unique_edges)
-    results = Bool[]
+    results = Tuple{Int, Int}[]
+    results_string = String[]
 
     println("Starting multigraph expansion for a graph with $n vertices and $num_unique_edges unique edges.")
     println("Expanding each edge with multiplicity up to $max_multiplicity.")
-    println("This will generate up to $(max_multiplicity^num_unique_edges) multigraphs.")
+    println("This will generate up to $((max_multiplicity-1^num_unique_edges)) multigraphs.")
 
     # A recursive helper to generate all combinations of multiplicities
     function generate_and_check(edge_idx::Int, current_multiedge_list::Vector{Tuple{Int, Int}})
@@ -73,8 +70,10 @@ function process_multigraph_expansions(simple_graph::ChipFiringGraph, max_multip
                 multigraph = ChipFiringGraph(n, current_multiedge_list)
                 gon1, gon2 = save_gon(multigraph)
                 if gon2 != -1
-                    println!("Saved from $(gon1) to $(gon2)!")
+                    println("Saved from $(gon1) to $(gon2)!")
+                    println(sprint_graph(multigraph))
                     push!(results, (gon1, gon2))
+                    push!(results_string, sprint_graph(multigraph))
                 end
             end
             return
@@ -101,14 +100,14 @@ function process_multigraph_expansions(simple_graph::ChipFiringGraph, max_multip
     # Start the recursion with the first edge and an empty list of edges
     generate_and_check(1, Tuple{Int, Int}[])
     println("Finished multigraph expansion.")
-    return results
+    return results, results_string
 end
 
 ###### START SCRIPT #######
 
 function main()
-    input_filename = "5.txt"
-    output_filename = "5.out"
+    input_filename = "6.txt"
+    output_filename = "6.out"
 
     if !isfile(input_filename)
         println("Error: File '$input_filename' not found.")
@@ -145,10 +144,11 @@ function main()
                     write(outfile, "  - Degree List: $(g.degree_list)\n")
 
                     # 3. Run the computation for the current graph.
-                    results = process_multigraph_expansions(g, 3)
+                    results, results_string = process_multigraph_expansions(g, 2)
 
 
                     write(outfile, "  - Result of results(): $results\n")
+                    write(outfile, "  - Associated graphs: $results_string\n")
 
                     write(outfile, "----------------------------------------\n")
                     

@@ -1,0 +1,128 @@
+Graph Gonality Analysis Results
+================================
+
+Graph #1:
+  - Vertices: 5, Edges: 4
+  - Degree List: [1, 1, 1, 1, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #2:
+  - Vertices: 5, Edges: 4
+  - Degree List: [2, 1, 1, 1, 3]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #3:
+  - Vertices: 5, Edges: 5
+  - Degree List: [2, 1, 1, 2, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #4:
+  - Vertices: 5, Edges: 5
+  - Degree List: [2, 2, 1, 2, 3]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #5:
+  - Vertices: 5, Edges: 5
+  - Degree List: [2, 1, 1, 3, 3]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #6:
+  - Vertices: 5, Edges: 6
+  - Degree List: [2, 2, 1, 3, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #7:
+  - Vertices: 5, Edges: 6
+  - Degree List: [2, 2, 2, 3, 3]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #8:
+  - Vertices: 5, Edges: 7
+  - Degree List: [2, 2, 2, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #9:
+  - Vertices: 5, Edges: 4
+  - Degree List: [2, 2, 1, 1, 2]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #10:
+  - Vertices: 5, Edges: 5
+  - Degree List: [2, 2, 2, 1, 3]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #11:
+  - Vertices: 5, Edges: 6
+  - Degree List: [2, 2, 2, 2, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #12:
+  - Vertices: 5, Edges: 5
+  - Degree List: [2, 2, 2, 2, 2]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #13:
+  - Vertices: 5, Edges: 6
+  - Degree List: [3, 2, 2, 2, 3]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #14:
+  - Vertices: 5, Edges: 7
+  - Degree List: [3, 2, 2, 3, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #15:
+  - Vertices: 5, Edges: 6
+  - Degree List: [3, 1, 3, 2, 3]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #16:
+  - Vertices: 5, Edges: 7
+  - Degree List: [3, 1, 3, 3, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #17:
+  - Vertices: 5, Edges: 8
+  - Degree List: [3, 2, 3, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #18:
+  - Vertices: 5, Edges: 7
+  - Degree List: [3, 3, 3, 2, 3]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #19:
+  - Vertices: 5, Edges: 8
+  - Degree List: [3, 3, 3, 3, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #20:
+  - Vertices: 5, Edges: 9
+  - Degree List: [3, 3, 4, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #21:
+  - Vertices: 5, Edges: 10
+  - Degree List: [4, 4, 4, 4, 4]
+Error processing Graph #21. Invalid format.
+----------------------------------------
