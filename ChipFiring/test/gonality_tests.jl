@@ -2,6 +2,16 @@
 using Test
 
 @testset "gonality tests" begin
+    @testset "tree" begin
+        adj_matrix = [
+            0 1 1;
+            1 0 0;
+            1 0 0;
+        ]
+        g = ChipFiringGraph(adj_matrix)
+        
+        @test compute_gonality(g, max_d=1, verbose = true) == 1
+    end
     @testset "C_4" begin
         # 4-cycle graph (C_4)
         #   1 -- 2

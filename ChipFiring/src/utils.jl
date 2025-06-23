@@ -47,7 +47,7 @@ function subdivide(G::ChipFiringGraph, subdivisions::Int)
     n = G.num_vertices
     m = G.num_edges
 
-    N = n + subdivisions*m # new number of edges
+    new_n = n + m # new number of vertices
 
     edge_list = G.edge_list
     new_edge_list = Vector{Tuple{Int, Int}}()
@@ -57,7 +57,7 @@ function subdivide(G::ChipFiringGraph, subdivisions::Int)
        # if more than 2, need to add more nodes and edges
         push!(new_edge_list, (u, new_vertex)) # add vertex from source
         # basically make a chain 
-        for i in 1:(subdivisions-2) # loop won't run if subdivisions = 2, so just add 1 edge
+        for _ in 1:(subdivisions-2) # loop won't run if subdivisions = 2, so just add 1 edge
             push!(new_edge_list, (new_vertex, new_vertex+1))
             new_vertex +=1
         end
@@ -65,6 +65,6 @@ function subdivide(G::ChipFiringGraph, subdivisions::Int)
         new_vertex += 1
 end
     # total vertices is now n + m
-    new_G = ChipFiringGraph(n + m, new_edge_list)
+    new_G = ChipFiringGraph(new_n, new_edge_list)
     return new_G
 end

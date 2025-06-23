@@ -10,3 +10,17 @@ add_edge!(g, 6, 7)
 exact_treewidth(g)
 
 plot(g)
+
+
+
+##### pinwheel but 
+
+tricycle_adj_matrix =[
+    0 1 1 1 1 1 1;
+    1 0 1 0 0 0 1;
+    1 1 0 1 0 0 0;
+    1 0 1 0 1 0 0;
+    1 0 0 1 0 1 0;
+    1 0 0 0 1 0 1;
+    1 1 0 0 0 1 0;
+]
