@@ -19,6 +19,23 @@ using Test
         @test compute_gonality(g, max_d=2, verbose=true) == 2
     end
 
+    @testset "subdivide C_4" begin
+                # 4-cycle graph (C_4)
+        #   1 -- 2
+        #   |    |
+        #   4 -- 3
+        adj_matrix = [
+            0 1 0 1;
+            1 0 1 0;
+            0 1 0 1;
+            1 0 1 0
+        ]
+        g = ChipFiringGraph(adj_matrix)
+        
+        # The gonality of a cycle graph is 2
+        @test compute_gonality(subdivide(g,2), max_d=2, verbose=true) == 2
+    end
+
     @testset "Cube" begin
         # cube graph
         #     5-------6
@@ -101,6 +118,10 @@ using Test
         g = ChipFiringGraph(tricycle_adj_matrix)
         
         # The gonality of the tricycle graph is 6 (https://arxiv.org/pdf/2106.12568)
-        @test compute_gonality(g, max_d=9, verbose=true) == 6
+        @test compute_gonality(g, max_d=6, verbose=true) == 6
+
+        # After we subdivide it, the gonality becomes 5!
+        g = subdivide(g, 2)
+        @test compute_gonality(g, max_d=5, verbose=true) == 5
     end
 end

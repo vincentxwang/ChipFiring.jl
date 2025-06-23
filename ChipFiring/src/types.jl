@@ -1,5 +1,3 @@
-Julia
-
 """
     ChipFiringGraph
 

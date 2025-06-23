@@ -26,3 +26,45 @@ function has_rank_at_least_one(g::ChipFiringGraph, d::Divisor)
     end
     return true
 end
+
+"""
+ subdivide
+
+ given a ChipFiring object G, produces another ChipFiring object which is an n-uniform subdivision of G 
+
+ # Arguments
+ - `G::ChipFiringGraph` the original Graph
+ - `subdivisions::Int8` number of subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc)
+
+ # Returns subdivided graph
+"""
+function subdivide(G::ChipFiringGraph, subdivisions::Int)
+    # if no subdivisions 
+    if subdivisions <= 1
+        return G
+    end
+
+    n = G.num_vertices
+    m = G.num_edges
+
+    N = n + subdivisions*m # new number of edges
+
+    edge_list = G.edge_list
+    new_edge_list = Vector{Tuple{Int, Int}}()
+
+    new_vertex = n+1 # label for new vertex
+    for (u,v) in edge_list
+       # if more than 2, need to add more nodes and edges
+        push!(new_edge_list, (u, new_vertex)) # add vertex from source
+        # basically make a chain 
+        for i in 1:(subdivisions-2) # loop won't run if subdivisions = 2, so just add 1 edge
+            push!(new_edge_list, (new_vertex, new_vertex+1))
+            new_vertex +=1
+        end
+        push!(new_edge_list, (new_vertex, v))
+        new_vertex += 1
+end
+    # total vertices is now n + m
+    new_G = ChipFiringGraph(n + m, new_edge_list)
+    return new_G
+end
