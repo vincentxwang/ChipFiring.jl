@@ -16,13 +16,24 @@ end
 
 Internal helper for `compute_gonality`. Checks if a divisor `D` has rank at least 1.
 """
-function has_rank_at_least_one(g::ChipFiringGraph, d::Divisor)
-    for v in 1:g.num_vertices
-        d.chips[v] -= 1
-        if !is_winnable(g, d)
-            return false
+function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool)
+    # more optimized code for 1 vertex 
+    if r == 1 || cgon
+        for v in 1:g.num_vertices
+            d.chips[v] -= r
+            if !is_winnable(g, d)
+                return false
+            end
+            d.chips[v] += r
         end
-        d.chips[v] += 1
+    else
+        for div in generate_effective_divisors(g.num_vertices, r)
+            d.chips .-= div.chips
+            if !is_winnable(g, d)
+                return false
+            end
+            d.chips .+= div.chips
+        end
     end
     return true
 end

@@ -151,11 +151,11 @@ using Test
 
         divisor1 = Divisor([1, 0, 1, 0, 0, 1, 0, 1])
 
-        @test has_rank_at_least_one(g, divisor1) == true
+        @test has_rank_at_least_r(g, divisor1, 1) == true
 
         divisor2 = Divisor([1, 0, 0, 0, 0, 1, 0, 1])
 
-        @test has_rank_at_least_one(g, divisor2) == false
+        @test has_rank_at_least_r(g, divisor2, 1) == false
     end
 
     @testset "dhar 1 (trivial cases)" begin
