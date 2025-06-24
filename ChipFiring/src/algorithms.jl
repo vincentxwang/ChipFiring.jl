@@ -1,5 +1,5 @@
 """
-    compute_gonality(g::ChipFiringGraph; max_d=nothing, verbose=false) -> Int
+    compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1, cgon=false) -> Int
 
 Computes the `r`-th (default: 1) gonality of a graph `g`.
 

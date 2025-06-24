@@ -12,7 +12,7 @@ function generate_effective_divisors(num_vertices, degree)
 end 
 
 """
-    has_rank_at_least_one(g::ChipFiringGraph, d::Divisor) -> Bool
+    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool) -> Bool
 
 Internal helper for `compute_gonality`. Checks if a divisor `D` has rank at least 1.
 """
@@ -39,13 +39,13 @@ function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool)
 end
 
 """
- subdivide
+ subdivide(G::ChipFiringGraph, subdivisions::Int)
 
- given a ChipFiring object G, produces another ChipFiring object which is an n-uniform subdivision of G 
+ Given a ChipFiring object G, produces another ChipFiring object which is an n-uniform subdivision of G.
 
  # Arguments
  - `G::ChipFiringGraph` the original Graph
- - `subdivisions::Int8` number of subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc)
+ - `subdivisions::Int` number of subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc)
 
  # Returns subdivided graph
 """
