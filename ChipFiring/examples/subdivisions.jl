@@ -4,8 +4,11 @@
 
 function save_gon(g::ChipFiringGraph)
     gon1 = compute_gonality(g)
-    gon2 = compute_gonality(subdivide(g, 2), max_d= gon1 - 1)
-    return gon1, gon2
+    if gon1 == 6
+        gon2 = compute_gonality(subdivide(g, 2), max_d= gon1 - 1)
+        return gon1, gon2
+    end
+    return -1, -1
 end
 
 
@@ -106,8 +109,8 @@ end
 ###### START SCRIPT #######
 
 function main()
-    input_filename = "6.txt"
-    output_filename = "6.out"
+    input_filename = "pinwheel.txt"
+    output_filename = "pinwheel.out"
 
     if !isfile(input_filename)
         println("Error: File '$input_filename' not found.")

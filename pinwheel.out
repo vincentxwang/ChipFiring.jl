@@ -4,5 +4,6 @@ Graph Gonality Analysis Results
 Graph #1:
   - Vertices: 7, Edges: 12
   - Degree List: [6, 3, 3, 3, 3, 3, 3]
-Error processing Graph #1. Invalid format.
+  - Result of results(): [(6, 5), (6, 5)]
+  - Associated graphs: ["Graph(V=7, E=15, Edges=[(1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (2, 3), (2, 7), (2, 7), (3, 4), (3, 4), (4, 5), (5, 6), (5, 6), (6, 7)])", "Graph(V=7, E=15, Edges=[(1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (2, 3), (2, 3), (2, 7), (3, 4), (4, 5), (4, 5), (5, 6), (6, 7), (6, 7)])"]
 ----------------------------------------
