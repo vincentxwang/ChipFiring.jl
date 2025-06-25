@@ -1,0 +1,27 @@
+#!/bin/bash
+#SBATCH --job-name=6V-SubDiv2-TEST       # Job name
+#SBATCH --partition=hpc               # Partition to run job on
+#SBATCH --mail-type=END,FAIL          # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=vw3@williams.edu   # Where to send mail    
+#SBATCH --ntasks=1                    # Run on a single CPU
+#SBATCH --mem=1gb                     # Job memory request
+#SBATCH --time=00:01:00               # Time limit hrs:min:sec
+#SBATCH --output=slurm_serial_%j.log  # Standard output and error log
+
+date;uptime;echo "hello";date
+
+
+echo "Date              = $(date)"
+echo "Hostname          = $(hostname -s)"
+echo "Working Directory = $(pwd)"
+echo ""
+echo "Number of Nodes Allocated      = $SLURM_JOB_NUM_NODES"
+echo "Number of Tasks Allocated      = $SLURM_NTASKS"
+echo "Number of Cores/Task Allocated = $SLURM_CPUS_PER_TASK"
+
+# Sleep for 5 minutes
+sleep 10    # so you can see it running on the queue
+echo ""
+echo -n "Finished program at: "
+date
+echo ""
