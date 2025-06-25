@@ -162,4 +162,20 @@ using Test
         g = subdivide(g, 2)
         @test compute_gonality(g, max_d=5, verbose=true) == 5
     end
+
+    @testset "weird case" begin
+
+        adj_matrix =[
+            0 5 0 0 1 0;
+            5 0 1 0 0 0;
+            0 1 0 5 0 0;
+            0 0 5 0 0 1;
+            1 0 0 0 0 5;
+            0 0 0 1 5 0;
+        ]
+        
+        g = ChipFiringGraph(adj_matrix)
+        
+        @test compute_gonality(g, max_d=6, verbose=true) == 3
+    end
 end
