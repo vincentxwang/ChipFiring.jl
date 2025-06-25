@@ -4,10 +4,9 @@
 
 function save_gon(g::ChipFiringGraph)
     gon1 = compute_gonality(g)
-    if gon1 == 6
-        gon2 = compute_gonality(subdivide(g, 2), max_d= gon1 - 1)
-        return gon1, gon2
-    end
+    gon2 = compute_gonality(subdivide(g, 2), max_d= gon1 - 1)
+    return gon1, gon2
+    # end
     return -1, -1
 end
 
@@ -61,7 +60,7 @@ function process_multigraph_expansions(simple_graph::ChipFiringGraph, max_multip
 
     println("Starting multigraph expansion for a graph with $n vertices and $num_unique_edges unique edges.")
     println("Expanding each edge with multiplicity up to $max_multiplicity.")
-    println("This will generate up to $((max_multiplicity-1^num_unique_edges)) multigraphs.")
+    println("This will generate up to $(((max_multiplicity-1)^num_unique_edges)) multigraphs.")
 
     # A recursive helper to generate all combinations of multiplicities
     function generate_and_check(edge_idx::Int, current_multiedge_list::Vector{Tuple{Int, Int}})
@@ -109,8 +108,8 @@ end
 ###### START SCRIPT #######
 
 function main()
-    input_filename = "pinwheel.txt"
-    output_filename = "pinwheel.out"
+    input_filename = "6.txt"
+    output_filename = "6.out"
 
     if !isfile(input_filename)
         println("Error: File '$input_filename' not found.")

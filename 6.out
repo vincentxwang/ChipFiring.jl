@@ -646,30 +646,8 @@ Graph #107:
 Graph #108:
   - Vertices: 6, Edges: 12
   - Degree List: [4, 4, 4, 3, 4, 5]
-  - Result of results(): Tuple{Int64, Int64}[]
-  - Associated graphs: String[]
+Error processing Graph #108. Invalid format.
 ----------------------------------------
 Graph #109:
   - Vertices: 6, Edges: 12
   - Degree List: [4, 4, 4, 4, 4, 4]
-  - Result of results(): Tuple{Int64, Int64}[]
-  - Associated graphs: String[]
-----------------------------------------
-Graph #110:
-  - Vertices: 6, Edges: 13
-  - Degree List: [4, 4, 4, 4, 5, 5]
-  - Result of results(): Tuple{Int64, Int64}[]
-  - Associated graphs: String[]
-----------------------------------------
-Graph #111:
-  - Vertices: 6, Edges: 14
-  - Degree List: [4, 4, 5, 5, 5, 5]
-  - Result of results(): Tuple{Int64, Int64}[]
-  - Associated graphs: String[]
-----------------------------------------
-Graph #112:
-  - Vertices: 6, Edges: 15
-  - Degree List: [5, 5, 5, 5, 5, 5]
-  - Result of results(): Tuple{Int64, Int64}[]
-  - Associated graphs: String[]
-----------------------------------------

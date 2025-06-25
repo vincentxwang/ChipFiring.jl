@@ -4,30 +4,36 @@ Graph Gonality Analysis Results
 Graph #1:
   - Vertices: 4, Edges: 3
   - Degree List: [1, 1, 1, 3]
-  - Result of results(): Bool[]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
 ----------------------------------------
 Graph #2:
   - Vertices: 4, Edges: 3
   - Degree List: [2, 1, 1, 2]
-  - Result of results(): Bool[]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
 ----------------------------------------
 Graph #3:
   - Vertices: 4, Edges: 4
   - Degree List: [2, 1, 2, 3]
-  - Result of results(): Bool[]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
 ----------------------------------------
 Graph #4:
   - Vertices: 4, Edges: 4
   - Degree List: [2, 2, 2, 2]
-  - Result of results(): Bool[]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
 ----------------------------------------
 Graph #5:
   - Vertices: 4, Edges: 5
   - Degree List: [2, 2, 3, 3]
-  - Result of results(): Bool[]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
 ----------------------------------------
 Graph #6:
   - Vertices: 4, Edges: 6
   - Degree List: [3, 3, 3, 3]
-  - Result of results(): Bool[]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
 ----------------------------------------

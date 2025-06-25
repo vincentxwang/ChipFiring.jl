@@ -1,4 +1,4 @@
-module ChipFiring
+# module ChipFiring
 
 using Combinatorics
 
@@ -7,12 +7,12 @@ include("core.jl")
 include("utils.jl")
 include("algorithms.jl")
 
-export ChipFiringGraph,
-       degree,
-       is_stable,
-       fire_vertex!,
-       stabilize!,
-       has_rank_at_least_one,
-       compute_gonality
+# export ChipFiringGraph,
+#        degree,
+#        is_stable,
+#        fire_vertex!,
+#        stabilize!,
+#        has_rank_at_least_one,
+#        compute_gonality
 
-end # module ChipFiring
+# end # module ChipFiring
