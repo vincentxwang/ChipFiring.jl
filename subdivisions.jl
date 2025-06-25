@@ -2,6 +2,8 @@
 
 # LOVE http://combos.org/nauty. generates all graphs. 
 
+include("ChipFiring/src/ChipFiring.jl")
+
 function save_gon(g::ChipFiringGraph)
     gon1 = compute_gonality(g)
     gon2 = compute_gonality(subdivide(g, 2), max_d= gon1 - 1)
