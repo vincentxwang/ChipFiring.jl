@@ -18,7 +18,7 @@ Computes the `r`-th (default: 1) gonality of a graph `g`.
 """
 function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1, cgon=false)
     n = g.num_vertices
-    max_degree_to_check = isnothing(max_d) ? n : max_d
+    max_degree_to_check = isnothing(max_d) ? (r * n) : max_d
 
     for d in min_d:max_degree_to_check
         if verbose; println("Testing degree d = $d..."); end
