@@ -178,4 +178,19 @@ using Test
         
         @test compute_gonality(g, max_d=6, verbose=true) == 3
     end
+
+    @testset "K_5 (6-th concentrated gonality)" begin
+  
+        adj_matrix = [
+            0 1 1 1 1;
+            1 0 1 1 1;
+            1 1 0 1 1;
+            1 1 1 0 1;
+            1 1 1 1 0
+        ]
+        g = ChipFiringGraph(adj_matrix)
+
+        @test compute_gonality(g) == 4
+        @test compute_gonality(g, r = 6, cgon = true, verbose = true, max_d=10) == 9
+    end
 end
