@@ -5,7 +5,7 @@ function plot_cgon_sequence(g::ChipFiringGraph, maxd::Int, maxr::Int)
     
     cgon_values = [compute_gonality(g, r = rval, cgon = true, verbose = false, max_d=maxd) for rval in r_values]
 
-    scatter(r_values, cgon_values,
+    scatter(r_values, cgon_values, grid = true,
     xlabel = "r",
     ylabel = "cgon_r",
     title = "Scatter Plot of Function Output",
@@ -37,7 +37,7 @@ function plot_both(g::ChipFiringGraph, max::Int, highR::Int)
     cgon_values = [compute_gonality(g, r = rval, cgon = true, verbose = false, max_d=max) for rval in r_values]
     gon_values = [compute_gonality(g, r = rval, verbose = false, max_d = max) for rval in r_values]
 
-    scatter(r_values, cgon_values,
+    scatter(r_values, cgon_values, grid = "on", xticks=0:highR, yticks=0:max,
     xlabel = "r",
     ylabel = "cgon_r",
     title = "Scatter Plot of Function Output",

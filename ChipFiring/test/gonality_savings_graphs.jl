@@ -59,7 +59,24 @@ using Test
    
     end 
 
-@testset "gonality tests" begin
+@testset "Misc Graphs" begin
+
+    #Complete Graphs
+    @testset "K_6" begin
+        #  1 -- 2
+        adj_matrix = [
+            0 1 1 1 1 1;
+            1 0 1 1 1 1;
+            1 1 0 1 1 1;
+            1 1 1 0 1 1;
+            1 1 1 1 0 1;
+            1 1 1 1 1 0
+        ]
+        g = ChipFiringGraph(adj_matrix)
+
+        @test compute_gonality(g, r = 6, cgon = true, verbose = false, max_d=10) == 9
+    end
+
     @testset "K_5" begin
         #  1 -- 2
         adj_matrix = [
@@ -96,6 +113,30 @@ using Test
         @test compute_gonality(g, r = 6, cgon = true, verbose = false, max_d=10) == 9
     end
 
+    #Complete Bipartite Graphs
+    @testset "K_2,3" begin
+        adj_matrix = [
+            0 0 1 1 1;
+            0 0 1 1 1;
+            1 1 0 0 0;
+            1 1 0 0 0;
+            1 1 0 0 0;
+        ]
+        g = ChipFiringGraph(adj_matrix);
+    end
+
+    @testset "K_3,3" begin
+            adj_matrix = [
+                0 0 0 1 1 1;
+                0 0 0 1 1 1;
+                0 0 0 1 1 1;
+                1 1 1 0 0 0;
+                1 1 1 0 0 0;
+                1 1 1 0 0 0;
+            ]
+            g = ChipFiringGraph(adj_matrix);
+        end
+
     @testset "K_3,4" begin
         adj_matrix = [
             0 0 0 0 1 1 1;
@@ -107,6 +148,88 @@ using Test
             1 1 1 1 0 0 0; 
         ]
         g = ChipFiringGraph(adj_matrix);
+    end
+
+    @testset "K_4,4" begin
+        adj_matrix = [
+            0 0 0 0 1 1 1 1;
+            0 0 0 0 1 1 1 1;
+            0 0 0 0 1 1 1 1;
+            0 0 0 0 1 1 1 1;
+            1 1 1 1 0 0 0 0;
+            1 1 1 1 0 0 0 0;
+            1 1 1 1 0 0 0 0; 
+            1 1 1 1 0 0 0 0; 
+        ]
+        g = ChipFiringGraph(adj_matrix);
+    end
+
+    #Cycle graphs
+    @testset "C4" begin
+        adj_matrix = [
+                    0 1 0 1;
+                    1 0 1 0;
+                    0 1 0 1;
+                    1 0 1 0
+        ]
+        g = ChipFiringGraph(adj_matrix)
+    end
+    @testset "C5" begin
+            adj_matrix = [
+                        0 1 0 0 1;
+                        1 0 1 0 0;
+                        0 1 0 1 0;
+                        0 0 1 0 1;
+                        1 0 0 1 0;
+            ]
+            g = ChipFiringGraph(adj_matrix)
+    end
+
+    #Random Graphs
+    @testset "House" begin
+            adj_matrix = [
+                        0 1 0 0 1;
+                        1 0 1 0 1;
+                        0 1 0 1 0;
+                        0 0 1 0 1;
+                        1 1 0 1 0;
+            ]
+            g = ChipFiringGraph(adj_matrix)
+    end
+
+    @testset "Shell-3" begin
+            adj_matrix = [
+                        0 1 0 0 1;
+                        1 0 1 0 1;
+                        0 1 0 1 1;
+                        0 0 1 0 1;
+                        1 1 1 1 0;
+            ]
+            g = ChipFiringGraph(adj_matrix)
+    end
+    @testset "Shell-4" begin
+            adj_matrix = [
+                        0 1 0 0 1 0;
+                        1 0 1 0 1 0;
+                        0 1 0 1 1 0;
+                        0 0 1 0 1 1;
+                        1 1 1 1 0 1;
+                        0 0 0 1 1 0;
+            ]
+            g = ChipFiringGraph(adj_matrix)
+    end
+
+    @testset "Shell-5" begin
+            adj_matrix = [
+                        0 1 0 0 1 0 0;
+                        1 0 1 0 1 0 0;
+                        0 1 0 1 1 0 0;
+                        0 0 1 0 1 1 0;
+                        1 1 1 1 0 1 1;
+                        0 0 0 1 1 0 1;
+                        0 0 0 0 1 1 0;
+            ]
+            g = ChipFiringGraph(adj_matrix)
     end
 
 end
