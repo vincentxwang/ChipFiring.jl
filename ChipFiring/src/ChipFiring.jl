@@ -6,6 +6,7 @@ include("types.jl")
 include("core.jl")
 include("utils.jl")
 include("algorithms.jl")
+include("charlottealgo.jl")
 
 export ChipFiringGraph,
        degree,

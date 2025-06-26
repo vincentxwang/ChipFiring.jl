@@ -28,6 +28,7 @@ matrix is expected to be symmetric.
   a `ChipFiringGraph` from a list of edges and the total number of vertices.
 """
 struct ChipFiringGraph
+    
     adj_matrix::Matrix{Int}
     num_vertices::Int
     num_edges::Int
