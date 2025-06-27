@@ -1,6 +1,8 @@
 module ChipFiring
 
 using Combinatorics
+using LinearAlgebra
+using Graphs
 
 include("types.jl")
 include("core.jl")

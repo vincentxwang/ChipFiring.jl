@@ -80,8 +80,6 @@ end
     return new_G
 end
 
-using Graphs
-
 """
     toGraphJL(g::ChipFiringGraph)
 
