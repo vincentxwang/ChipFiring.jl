@@ -77,3 +77,16 @@ function get_num_edges(g::ChipFiringGraph, u::Int, v::Int)
     end
     return g.adj_matrix[u, v]
 end
+
+using LinearAlgebra
+
+"""
+    get_num_edges(g::ChipFiringGraph, u::Int, v::Int) -> Int
+
+Returns the number of edges (multiplicity) between two vertices `u` and `v`.
+"""
+function L(g::ChipFiringGraph)
+    return diagm(g.degree_list) - g.adj_matrix
+end
+
+

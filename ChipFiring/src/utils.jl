@@ -79,3 +79,34 @@ end
     new_G = ChipFiringGraph(N, new_edge_list)
     return new_G
 end
+
+using Graphs
+
+"""
+    toGraphJL(g::ChipFiringGraph)
+
+Converts a `ChipFiringGraph` into a `Graphs.Graph` object for use with the
+Graphs.jl library.
+
+The `Graphs.Graph` type represents a simple graph, so any edge multiplicities
+in the `ChipFiringGraph` are ignored.
+
+# Arguments
+- `g::ChipFiringGraph`: The `ChipFiringGraph` to convert.
+
+# Returns
+- `Graphs.Graph`: A simple graph representation of `g`.
+"""
+function toGraphJL(g::ChipFiringGraph)
+    # Create a new simple graph with the same number of vertices
+    jl_graph = SimpleGraph(g.num_vertices)
+    
+    # Add each edge from the ChipFiringGraph's edge list.
+    # The edge_list may contain duplicates if the original graph had multiplicities,
+    # but add_edge! handles this by simply not adding an edge that already exists.
+    for (u, v) in g.edge_list
+        add_edge!(jl_graph, u, v)
+    end
+    
+    return jl_graph
+end
