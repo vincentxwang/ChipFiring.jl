@@ -58,6 +58,19 @@ using Test
         @test compute_gonality(s2, max_d=5, verbose=true) == 4
    
     end 
+
+    @testset "Ralph's 7 to 6 on 7 vertices" begin
+    num_vertices = 7
+    edge_list = [
+        (1,2), (1,2), (2,6), (6,5), (6,5), (5,4), (4,3), (4,3), (3,1), 
+        (7,1), (7,1), (7,2), (7,6), (7,6), (7,5), (7,4), (7,4), (7,3)]
+    g = ChipFiringGraph(num_vertices, edge_list)
+
+    @test compute_gonality(g, max_d=6, verbose=true) == 5
+
+    s2 = subdivide(g,2)
+    @test compute_gonality(s2, max_d=5, verbose=true) == 4
+    end 
 end
 
 @testset "Misc Graphs" begin
