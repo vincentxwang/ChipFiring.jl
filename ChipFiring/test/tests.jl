@@ -108,33 +108,32 @@ using Test
         g = ChipFiringGraph(cube_adj_matrix)
 
         divisor1 = Divisor([0, 0, 0, 0, 0, 0, 0, 0])
-        d2 = deepcopy(divisor1)
 
-        @test is_winnable(g, divisor1, d2) == true
+        @test is_winnable(g, divisor1) == true
 
         divisor2 = Divisor([0, -1, 0, 0, 0, 0, 0, 0])
 
-        @test is_winnable(g, divisor2, d2) == false
+        @test is_winnable(g, divisor2) == false
 
         divisor3 = Divisor([1, -1, 0, 0, 0, 0, 0, 0])
 
-        @test is_winnable(g, divisor3, d2) == false
+        @test is_winnable(g, divisor3) == false
 
         divisor4 = Divisor([-1, 0, 0, 0, 0, 0, 1, 0])
 
-        @test is_winnable(g, divisor4, d2) == false
+        @test is_winnable(g, divisor4) == false
 
         divisor5 = Divisor([1, 0, 1, 0, 0, 1, -1, 1])
 
-        @test is_winnable(g, divisor5, d2) == true
+        @test is_winnable(g, divisor5) == true
 
         divisor6 = Divisor([1, 0, 1, 0, 0, 1, -10, 1])
 
-        @test is_winnable(g, divisor6, d2) == false
+        @test is_winnable(g, divisor6) == false
 
         divisor7 = Divisor([-1, 0, 3, 0, 0, 0, 0, 0])
 
-        @test is_winnable(g, divisor7, d2) == false
+        @test is_winnable(g, divisor7) == false
     end
 
     @testset "rank at least 1 (cube)" begin

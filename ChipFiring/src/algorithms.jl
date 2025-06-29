@@ -223,7 +223,7 @@ function find_negative_vertices!(out_vec::Vector{Int}, g::ChipFiringGraph, d::Di
     end
 end
 """
-    is_winnable(g::ChipFiringGraph, divisor::Divisor) -> Bool
+    is_winnable(g::ChipFiringGraph, divisor::Divisor, ws::Workspace) -> Bool
 
 Checks if a chip configuration is linearly equivalent to an
 effective divisor using a version of Dhar's burning algorithm.
@@ -236,4 +236,13 @@ function is_winnable(g::ChipFiringGraph, divisor::Divisor, ws::Workspace)
     else
         return false
     end
+end
+
+"""
+    is_winnable(g::ChipFiringGraph, divisor::Divisor) -> Bool
+
+Wrapper.
+"""
+function is_winnable(g::ChipFiringGraph, divisor::Divisor)
+    is_winnable(g, divisor, Workspace(g.num_vertices))
 end
