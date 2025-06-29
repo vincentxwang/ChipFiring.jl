@@ -21,18 +21,25 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
     max_degree_to_check = isnothing(max_d) ? (r * n) : max_d
     genus = g.num_edges - g.num_vertices + 1
 
-    if r >= genus && cgon == false
-        return r + genus; end
+    if r >= genus && !cgon
+        return r + genus
+    end
+
+    D = Divisor(zeros(Int, n))
+    D2 = deepcopy(D)
 
     for d in min_d:max_degree_to_check
-        if verbose; println("Testing degree d = $d..."); end
+        if verbose
+            # Calculate number of divisors without storing them
+            num_divisors = binomial(BigInt(n + d - 1), d)
+            println("Testing degree d = $d... (checking $num_divisors divisors)")
+        end
         
-        divisors_to_check = generate_effective_divisors(n, d)
-        if verbose; println("  Found $(length(divisors_to_check)) divisors to check for rank >= 1."); end
-
-        for D in divisors_to_check
-            if has_rank_at_least_r(g, D, r, cgon)
-                if verbose; println("  SUCCESS: Found divisor D = $D of degree $d with r(D) >= 1."); end
+        # Iterate over all effective divisors of degree d without collecting them into an array.
+        for chips in multiexponents(n, d)
+            D.chips .= chips
+            if has_rank_at_least_r(g, D, r, cgon, D2)
+                if verbose; println("  SUCCESS: Found divisor of degree $d with rank >= $r."); end
                 return d
             end
         end
@@ -57,7 +64,7 @@ function dhar_recursive!(g::ChipFiringGraph, d::Divisor, source::Int, burned::Ve
 
         if d.chips[v] < threats[v]
             burned[v] = true
-            for b in 1:g.num_vertices
+            for b in neighbors(g,v)
                 threats[b] += get_num_edges(g, v, b)
             end
             dhar_recursive!(g, d, v, burned, threats)
@@ -114,13 +121,14 @@ from the user-provided Python code.
 - `g`: The graph structure.
 - `divisor`: The initial chip configuration.
 - `q`: The sink vertex.
+- `d`: Any dummy divisor (to reduce allocations).
 
 # Returns
 - `d::Vector{Int}`: The resulting divisor
 """
-function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int)
+function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, d::Divisor)
 
-    d = deepcopy(divisor)
+    d.chips .= divisor.chips
 
     # Stage 1: Benevolence : can have some performance improvements in two ways 1) debt-reduction trick. 2) keep track of negative nodes
 
@@ -148,14 +156,14 @@ function find_negative_vertices(g::ChipFiringGraph, d::Divisor, q::Int)
 end
 
 """
-    is_winnable(g::ChipFiringGraph, d::Divisor) -> Bool
+    is_winnable(g::ChipFiringGraph, divisor::Divisor) -> Bool
 
 Checks if a chip configuration is linearly equivalent to an
 effective divisor using a version of Dhar's burning algorithm.
 """
-function is_winnable(g::ChipFiringGraph, d::Divisor)
+function is_winnable(g::ChipFiringGraph, divisor::Divisor, d::Divisor)
     q = 1
-    q_red = q_reduced(g, d, q)
+    q_red = q_reduced(g, divisor, q, d)
     if q_red.chips[q] >= 0
         return true
     else

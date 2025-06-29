@@ -108,32 +108,33 @@ using Test
         g = ChipFiringGraph(cube_adj_matrix)
 
         divisor1 = Divisor([0, 0, 0, 0, 0, 0, 0, 0])
+        d2 = deepcopy(divisor1)
 
-        @test is_winnable(g, divisor1) == true
+        @test is_winnable(g, divisor1, d2) == true
 
         divisor2 = Divisor([0, -1, 0, 0, 0, 0, 0, 0])
 
-        @test is_winnable(g, divisor2) == false
+        @test is_winnable(g, divisor2, d2) == false
 
         divisor3 = Divisor([1, -1, 0, 0, 0, 0, 0, 0])
 
-        @test is_winnable(g, divisor3) == false
+        @test is_winnable(g, divisor3, d2) == false
 
         divisor4 = Divisor([-1, 0, 0, 0, 0, 0, 1, 0])
 
-        @test is_winnable(g, divisor4) == false
+        @test is_winnable(g, divisor4, d2) == false
 
         divisor5 = Divisor([1, 0, 1, 0, 0, 1, -1, 1])
 
-        @test is_winnable(g, divisor5) == true
+        @test is_winnable(g, divisor5, d2) == true
 
         divisor6 = Divisor([1, 0, 1, 0, 0, 1, -10, 1])
 
-        @test is_winnable(g, divisor6) == false
+        @test is_winnable(g, divisor6, d2) == false
 
         divisor7 = Divisor([-1, 0, 3, 0, 0, 0, 0, 0])
 
-        @test is_winnable(g, divisor7) == false
+        @test is_winnable(g, divisor7, d2) == false
     end
 
     @testset "rank at least 1 (cube)" begin
@@ -150,12 +151,13 @@ using Test
         g = ChipFiringGraph(cube_adj_matrix)
 
         divisor1 = Divisor([1, 0, 1, 0, 0, 1, 0, 1])
+        d2 = deepcopy(divisor1)
 
-        @test has_rank_at_least_r(g, divisor1, 1, false) == true
+        @test has_rank_at_least_r(g, divisor1, 1, false, d2) == true
 
         divisor2 = Divisor([1, 0, 0, 0, 0, 1, 0, 1])
 
-        @test has_rank_at_least_r(g, divisor2, 1, false) == false
+        @test has_rank_at_least_r(g, divisor2, 1, false, d2) == false
     end
 
     @testset "dhar 1 (trivial cases)" begin
@@ -228,39 +230,41 @@ using Test
         g_house = ChipFiringGraph(house_adj_matrix)
 
         divisor = Divisor([1, 0, -1, -2, 3])
-        @test q_reduced(g_house, divisor, 1).chips == [-1, 0, 0, 2, 0]
+        @test q_reduced(g_house, divisor, 1, deepcopy(divisor)).chips == [-1, 0, 0, 2, 0]
     end
 end
 
 using BenchmarkTools
 
-
-for i in 1:100
-    @profile compute_gonality(g_house)
-
-end
-
 function profile_test()
     icosahedron_adj_matrix =[
-            0 1 1 1 1 0 0 0 1 0 0 0;
-            1 0 1 0 1 1 1 0 0 0 0 0;
-            1 1 0 0 0 0 1 1 1 0 0 0;
-            1 0 0 0 1 0 0 0 1 1 1 0;
-            1 1 0 1 0 1 0 0 0 1 0 0;
-            0 1 0 0 1 0 1 0 0 1 0 1;
-            0 1 1 0 0 1 0 1 0 0 0 1;
-            0 0 1 0 0 0 1 0 1 0 1 1;
-            1 0 1 1 0 0 0 1 0 0 1 0;
-            0 0 0 1 1 1 0 0 0 0 1 1;
-            0 0 0 1 0 0 0 1 1 1 0 1;
-            0 0 0 0 0 1 1 1 0 1 1 0
-        ]
+        0 1 1 1 1 0 0 0 1 0 0 0;
+        1 0 1 0 1 1 1 0 0 0 0 0;
+        1 1 0 0 0 0 1 1 1 0 0 0;
+        1 0 0 0 1 0 0 0 1 1 1 0;
+        1 1 0 1 0 1 0 0 0 1 0 0;
+        0 1 0 0 1 0 1 0 0 1 0 1;
+        0 1 1 0 0 1 0 1 0 0 0 1;
+        0 0 1 0 0 0 1 0 1 0 1 1;
+        1 0 1 1 0 0 0 1 0 0 1 0;
+        0 0 0 1 1 1 0 0 0 0 1 1;
+        0 0 0 1 0 0 0 1 1 1 0 1;
+        0 0 0 0 0 1 1 1 0 1 1 0
+    ]
+    
     g = ChipFiringGraph(icosahedron_adj_matrix)
     compute_gonality(g)
 end
 
 @profview profile_test()
 
+function test()
+    for div in multiexponents(15,7)
+        c = div
+    end
+end
+@btime test()
+@btime multiexponents(8, 5)
 
 @btime profile_test()
 

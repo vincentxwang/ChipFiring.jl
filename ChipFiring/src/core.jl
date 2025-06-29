@@ -60,10 +60,7 @@ end
 Returns a vector containing the indices of the neighbors of vertex `v`.
 """
 function neighbors(g::ChipFiringGraph, v::Int)
-    if v < 1 || v > g.num_vertices
-        error("Vertex index $v out of bounds (1 to $(g.num_vertices)).")
-    end
-    return findall(x -> x > 0, g.adj_matrix[v, :])
+    return g.adj_list[v]
 end
 
 """
