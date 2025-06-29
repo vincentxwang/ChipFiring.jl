@@ -28,15 +28,15 @@ function has_rank_at_least_r(g::ChipFiringGraph, divisor::Divisor, r::Int, cgon:
 end
 
 """
- subdivide(G::ChipFiringGraph, subdivisions::Int)
+    subdivide(G::ChipFiringGraph, subdivisions::Int)
 
- Given a ChipFiring object G, produces another ChipFiring object which is an n-uniform subdivision of G.
+Given a ChipFiring object G, produces another ChipFiring object which is an n-uniform subdivision of G.
 
- # Arguments
- - `G::ChipFiringGraph` the original Graph
- - `subdivisions::Int` number of subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc)
+# Arguments
+- `G::ChipFiringGraph` the original Graph
+- `subdivisions::Int` number of subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc)
 
- # Returns subdivided graph
+# Returns subdivided graph
 """
 function subdivide(G::ChipFiringGraph, subdivisions::Int)
     # if no subdivisions 
@@ -70,7 +70,7 @@ end
 end
 
 """
-    toGraphJL(g::ChipFiringGraph)
+    to_graphjl(g::ChipFiringGraph)
 
 Converts a `ChipFiringGraph` into a `Graphs.Graph` object for use with the
 Graphs.jl library.
@@ -84,7 +84,7 @@ in the `ChipFiringGraph` are ignored.
 # Returns
 - `Graphs.Graph`: A simple graph representation of `g`.
 """
-function toGraphJL(g::ChipFiringGraph)
+function to_graphjl(g::ChipFiringGraph)
     # Create a new simple graph with the same number of vertices
     jl_graph = SimpleGraph(g.num_vertices)
     
