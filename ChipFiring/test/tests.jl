@@ -258,6 +258,12 @@ end
 
 @profview profile_test()
 
+function test()
+    for div in multiexponents(15,7)
+        c = div
+    end
+end
+@btime test()
 @btime multiexponents(8, 5)
 
 @btime profile_test()

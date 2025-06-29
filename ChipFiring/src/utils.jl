@@ -1,23 +1,11 @@
 """
-
-generate_effective_divisors(num_vertices, degree) -> Vector{Divisor}
-
-
-Generates all effective divisors (chip configurations with non-negative chips)
-of a given total degree.
-
-"""
-function generate_effective_divisors(num_vertices, degree)
-    return Divisor.(collect(multiexponents(num_vertices, convert(Int, degree))))
-end 
-
-"""
     has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool) -> Bool
 
 Internal helper for `compute_gonality`. Checks if a divisor `D` has rank at least 1.
 """
 function has_rank_at_least_r(g::ChipFiringGraph, divisor::Divisor, r::Int, cgon::Bool, d::Divisor)
     # more optimized code for 1 vertex 
+
 
     if r == 1 || cgon
         for v in 1:g.num_vertices
@@ -28,12 +16,12 @@ function has_rank_at_least_r(g::ChipFiringGraph, divisor::Divisor, r::Int, cgon:
             divisor.chips[v] += r
         end
     else
-        for div in generate_effective_divisors(g.num_vertices, r)
-            divisor.chips .-= div.chips
+        for div in multiexponents(g.num_vertices, r)
+            divisor.chips .-= div
             if !is_winnable(g, divisor, d)
                 return false
             end
-            divisor.chips .+= div.chips
+            divisor.chips .+= div
         end
     end
     return true
