@@ -12,29 +12,40 @@ function generate_effective_divisors(num_vertices, degree)
 end 
 
 """
-    has_rank_at_least_one(g::ChipFiringGraph, d::Divisor) -> Bool
+    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool) -> Bool
 
 Internal helper for `compute_gonality`. Checks if a divisor `D` has rank at least 1.
 """
-function has_rank_at_least_one(g::ChipFiringGraph, d::Divisor)
-    for v in 1:g.num_vertices
-        d.chips[v] -= 1
-        if !is_winnable(g, d)
-            return false
+function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool)
+    # more optimized code for 1 vertex 
+    if r == 1 || cgon
+        for v in 1:g.num_vertices
+            d.chips[v] -= r
+            if !is_winnable(g, d)
+                return false
+            end
+            d.chips[v] += r
         end
-        d.chips[v] += 1
+    else
+        for div in generate_effective_divisors(g.num_vertices, r)
+            d.chips .-= div.chips
+            if !is_winnable(g, d)
+                return false
+            end
+            d.chips .+= div.chips
+        end
     end
     return true
 end
 
 """
- subdivide
+ subdivide(G::ChipFiringGraph, subdivisions::Int)
 
- given a ChipFiring object G, produces another ChipFiring object which is an n-uniform subdivision of G 
+ Given a ChipFiring object G, produces another ChipFiring object which is an n-uniform subdivision of G.
 
  # Arguments
  - `G::ChipFiringGraph` the original Graph
- - `subdivisions::Int8` number of subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc)
+ - `subdivisions::Int` number of subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc)
 
  # Returns subdivided graph
 """
@@ -67,4 +78,33 @@ end
     # total vertices is now n + (subdivisions-1)*m
     new_G = ChipFiringGraph(N, new_edge_list)
     return new_G
+end
+
+"""
+    toGraphJL(g::ChipFiringGraph)
+
+Converts a `ChipFiringGraph` into a `Graphs.Graph` object for use with the
+Graphs.jl library.
+
+The `Graphs.Graph` type represents a simple graph, so any edge multiplicities
+in the `ChipFiringGraph` are ignored.
+
+# Arguments
+- `g::ChipFiringGraph`: The `ChipFiringGraph` to convert.
+
+# Returns
+- `Graphs.Graph`: A simple graph representation of `g`.
+"""
+function toGraphJL(g::ChipFiringGraph)
+    # Create a new simple graph with the same number of vertices
+    jl_graph = SimpleGraph(g.num_vertices)
+    
+    # Add each edge from the ChipFiringGraph's edge list.
+    # The edge_list may contain duplicates if the original graph had multiplicities,
+    # but add_edge! handles this by simply not adding an edge that already exists.
+    for (u, v) in g.edge_list
+        add_edge!(jl_graph, u, v)
+    end
+    
+    return jl_graph
 end

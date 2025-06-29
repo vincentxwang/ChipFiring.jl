@@ -11,7 +11,7 @@ function lend!(g::ChipFiringGraph, d::Divisor, v::Int)
 
     # Distribute chips to neighbors
     for j in g.adj_list[v]
-        d.chips[j] += g.graph[v, j]
+        d.chips[j] += g.adj_matrix[v, j]
     end
 end
 
@@ -39,7 +39,7 @@ function borrow!(g::ChipFiringGraph, d::Divisor, v::Int)
 
     # Distribute chips to neighbors
     for j in g.adj_list[v]
-        d.chips[j] -= g.graph[v, j]
+        d.chips[j] -= g.adj_matrix[v, j]
     end
 end
 
@@ -63,7 +63,7 @@ function neighbors(g::ChipFiringGraph, v::Int)
     if v < 1 || v > g.num_vertices
         error("Vertex index $v out of bounds (1 to $(g.num_vertices)).")
     end
-    return findall(x -> x > 0, g.graph[v, :])
+    return findall(x -> x > 0, g.adj_matrix[v, :])
 end
 
 """
@@ -75,7 +75,16 @@ function get_num_edges(g::ChipFiringGraph, u::Int, v::Int)
     if u < 1 || u > g.num_vertices || v < 1 || v > g.num_vertices
         error("Vertex index out of bounds (1 to $(g.num_vertices)).")
     end
-    return g.graph[u, v]
+    return g.adj_matrix[u, v]
+end
+
+"""
+    laplacian(g::ChipFiringGraph) -> 
+
+Returns the number of edges (multiplicity) between two vertices `u` and `v`.
+"""
+function laplacian(g::ChipFiringGraph)
+    return diagm(g.degree_list) - g.adj_matrix
 end
 
 """
@@ -87,3 +96,4 @@ function sprint_graph(g::ChipFiringGraph)
     edge_strs = [string(e) for e in g.edge_list]
     return "Graph(V=$(g.num_vertices), E=$(g.num_edges), Edges=[$(join(edge_strs, ", "))])"
 end
+

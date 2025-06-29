@@ -1,31 +1,37 @@
 """
-    compute_gonality(g::ChipFiringGraph; max_d=nothing, verbose=false) -> Int
+    compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1, cgon=false) -> Int
 
-Computes the gonality of a graph `g`.
-
-This is done by finding the smallest degree `d` for which there exists an effective
-divisor `D` of degree `d` with rank at least 1.
+Computes the `r`-th (default: 1) gonality of a graph `g`.
 
 # Arguments
 - `g::ChipFiringGraph`: The graph to analyze.
-- `max_d=nothing`: (Optional) The maximum degree `d` to check. Defaults to `nothing`.
-- `verbose=false`: (Optional) If `true`, prints progress updates.
+
+# Optional Arguments
+- `min_d=1`: The minimum degree `d` to check.
+- `max_d=nothing`: The maximum degree `d` to check. Defaults to `nothing`.
+- `verbose=false`:  If `true`, prints progress updates.
+- `r=1`: Calculates `r`-th gonality. Defaults to `1`.
+- `cgon=false`: Calculate the concentrated r-th gonality if `true`. 
 
 # Returns
 - `Int`: The computed gonality of the graph. Returns -1 if not found within `max_d`.
 """
-function compute_gonality(g::ChipFiringGraph; max_d=nothing, verbose=false)
+function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1, cgon=false)
     n = g.num_vertices
-    max_degree_to_check = isnothing(max_d) ? n : max_d
+    max_degree_to_check = isnothing(max_d) ? (r * n) : max_d
+    genus = g.num_edges - g.num_vertices + 1
 
-    for d in 1:max_degree_to_check
+    if r >= genus && cgon == false
+        return r + genus; end
+
+    for d in min_d:max_degree_to_check
         if verbose; println("Testing degree d = $d..."); end
         
         divisors_to_check = generate_effective_divisors(n, d)
         if verbose; println("  Found $(length(divisors_to_check)) divisors to check for rank >= 1."); end
 
         for D in divisors_to_check
-            if has_rank_at_least_one(g, D)
+            if has_rank_at_least_r(g, D, r, cgon)
                 if verbose; println("  SUCCESS: Found divisor D = $D of degree $d with r(D) >= 1."); end
                 return d
             end
