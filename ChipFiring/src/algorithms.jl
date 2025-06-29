@@ -69,7 +69,7 @@ end
 
 
 """
-    dhar_recursive!(g, divisor, source, burned)
+    dhar_recursive!(g, divisor, source, burned, threats)
 
 Internal recursive helper for the `dhar` algorithm. It explores the graph from
 the `source` vertex, modifying the `burned` vector in-place.
@@ -92,7 +92,7 @@ function dhar_recursive!(g::ChipFiringGraph, d::Divisor, source::Int, burned::Ve
 end
 
 """
-    dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
+    dhar(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace)
 
 Performs a recursive burn starting from a `source` vertex to determine if a `divisor`
 is super-stable with respect to that source.
@@ -107,9 +107,12 @@ it to already-burnt vertices.
 - `source::Int`: The vertex (1-indexed) from which to start the burn.
 
 # Returns
-- A tuple `is_superstable, legals` where:
-    - `is_superstable::Bool`: `true` if the entire graph was burned.
-    - `legals::Vector{Int}`: The indices of unburned vertices that form a legal firing.
+- `is_superstable::Bool`: `true` if the entire graph was burned.
+
+
+# Modifies
+- `ws.burned::Vector{Bool}`: Tracks burned vertices. 
+- `ws.legals::Vector{Int}`: The indices of unburned vertices that form a legal firing.
 """
 function dhar!(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace)
     n = g.num_vertices
@@ -158,11 +161,11 @@ function dhar!(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace)
     end # If superstable, the vector is correctly left empty.
     
     # `ws.legals` is now correctly populated without any new allocations.
-    return is_superstable, ws.legals
+    return is_superstable
 end
 
 """
-    q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int)
+    q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace)
 
 Finds an equivalent, q-reduced effective divisor to the one given, based on the algorithm
 from the user-provided Python code.
@@ -183,29 +186,42 @@ function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
 
     # Stage 1: Benevolence : can have some performance improvements in two ways 1) debt-reduction trick. 2) keep track of negative nodes
 
-    firing_set = find_negative_vertices(g, d, q)
+    find_negative_vertices!(ws.firing_set, g, d, q)
 
-    while !isempty(firing_set)
+    while !isempty(ws.firing_set)
         # Fire all non-sink stable vertices
-        borrow!(g, d, firing_set)
-        firing_set = find_negative_vertices(g, d, q)
+        borrow!(g, d, ws.firing_set)
+        
+        # Subsequent checks also populate in-place, without new allocations.
+        find_negative_vertices!(ws.firing_set, g, d, q)
     end
 
-
     # Stage 2: Relief
-    isSuperstable, legals = dhar!(g, d, q, ws)
+    isSuperstable = dhar!(g, d, q, ws)
     while d.chips[q] < 0 && !isSuperstable
-        lend!(g, d, legals)
-        isSuperstable, legals = dhar!(g, d, q, ws)
+        lend!(g, d, ws.legals)
+        isSuperstable = dhar!(g, d, q, ws)
     end
 
     return d
 end
 
-function find_negative_vertices(g::ChipFiringGraph, d::Divisor, q::Int)
-    return [i for i in 1:g.num_vertices if (i != q && d.chips[i] < 0)]
-end
+"""
+    find_negative_vertices!(out_vec::Vector{Int}, g::ChipFiringGraph, d::Divisor, q::Int)
 
+Finds all vertices with negative chips (excluding the sink `q`) and pushes them
+into the pre-allocated `out_vec`. This is a non-allocating operation.
+"""
+function find_negative_vertices!(out_vec::Vector{Int}, g::ChipFiringGraph, d::Divisor, q::Int)
+    # Clear the vector of any old data before reusing it.
+    empty!(out_vec)
+    
+    for i in 1:g.num_vertices
+        if i != q && d.chips[i] < 0
+            push!(out_vec, i)
+        end
+    end
+end
 """
     is_winnable(g::ChipFiringGraph, divisor::Divisor) -> Bool
 
