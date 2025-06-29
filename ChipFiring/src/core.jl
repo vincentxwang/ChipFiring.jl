@@ -79,7 +79,7 @@ function get_num_edges(g::ChipFiringGraph, u::Int, v::Int)
 end
 
 """
-    get_num_edges(g::ChipFiringGraph, u::Int, v::Int) -> Int
+    laplacian(g::ChipFiringGraph) -> 
 
 Returns the number of edges (multiplicity) between two vertices `u` and `v`.
 """
@@ -87,4 +87,13 @@ function laplacian(g::ChipFiringGraph)
     return diagm(g.degree_list) - g.adj_matrix
 end
 
+"""
+    sprint_graph(g::ChipFiringGraph) -> String
+
+Returns a concise, single-line string representation of a ChipFiringGraph.
+"""
+function sprint_graph(g::ChipFiringGraph)
+    edge_strs = [string(e) for e in g.edge_list]
+    return "Graph(V=$(g.num_vertices), E=$(g.num_edges), Edges=[$(join(edge_strs, ", "))])"
+end
 
