@@ -234,29 +234,16 @@ end
 
 using BenchmarkTools
 
-
-for i in 1:100
-    @profile compute_gonality(g_house)
-
-end
-
 function profile_test()
-    icosahedron_adj_matrix =[
-            0 1 1 1 1 0 0 0 1 0 0 0;
-            1 0 1 0 1 1 1 0 0 0 0 0;
-            1 1 0 0 0 0 1 1 1 0 0 0;
-            1 0 0 0 1 0 0 0 1 1 1 0;
-            1 1 0 1 0 1 0 0 0 1 0 0;
-            0 1 0 0 1 0 1 0 0 1 0 1;
-            0 1 1 0 0 1 0 1 0 0 0 1;
-            0 0 1 0 0 0 1 0 1 0 1 1;
-            1 0 1 1 0 0 0 1 0 0 1 0;
-            0 0 0 1 1 1 0 0 0 0 1 1;
-            0 0 0 1 0 0 0 1 1 1 0 1;
-            0 0 0 0 0 1 1 1 0 1 1 0
-        ]
-    g = ChipFiringGraph(icosahedron_adj_matrix)
-    compute_gonality(g)
+    multiplicity_matrix = [
+        0 2 1 0 0;
+        2 0 4 2 0;
+        1 4 0 3 1;
+        0 2 3 0 4;
+        0 0 1 4 0
+    ]
+    g = ChipFiringGraph(multiplicity_matrix)
+    compute_gonality(subdivide(g,2))
 end
 
 @profview profile_test()

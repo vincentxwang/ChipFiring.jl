@@ -57,7 +57,7 @@ function dhar_recursive!(g::ChipFiringGraph, d::Divisor, source::Int, burned::Ve
 
         if d.chips[v] < threats[v]
             burned[v] = true
-            for b in 1:g.num_vertices
+            for b in neighbors(g,v)
                 threats[b] += get_num_edges(g, v, b)
             end
             dhar_recursive!(g, d, v, burned, threats)
