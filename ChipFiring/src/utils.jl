@@ -1,27 +1,74 @@
 """
+    next_multiexponent!(v::Vector{Int}) -> Bool
+
+Mutates the vector `v` into the next multiexponent configuration in-place.
+Assumes the sum of elements should remain constant.
+
+# Returns
+- `true` if a next configuration was generated.
+- `false` if `v` was already the last configuration (e.g., [0, 0, ..., d]).
+"""
+function next_composition!(v::Vector{Int})
+    n = length(v)
+
+    # Find the first non-zero element from the left (the pivot).
+    t = findfirst(!iszero, v)
+
+    # If no non-zero element is found, or if all the value is in the last
+    # element, we are at the final composition.
+    if t === nothing || t == n
+        return false
+    end
+
+    # Take the value from the pivot position.
+    val = v[t]
+    # Reset the pivot position to zero.
+    v[t] = 0
+    # Increment the position to the right of the pivot.
+    v[t+1] += 1
+    # Add the remainder of the pivot's value (minus the one we moved)
+    # to the very first element.
+    v[1] += val - 1
+    
+    return true
+end
+
+"""
     has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool) -> Bool
 
 Internal helper for `compute_gonality`. Checks if a divisor `D` has rank at least 1.
 """
-function has_rank_at_least_r(g::ChipFiringGraph, divisor::Divisor, r::Int, cgon::Bool, d::Divisor)
-    # more optimized code for 1 vertex 
-
-
+function has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace)
+    divisor = ws.d1
     if r == 1 || cgon
         for v in 1:g.num_vertices
             divisor.chips[v] -= r
-            if !is_winnable(g, divisor, d)
+            winnable = is_winnable(g, divisor, ws)
+            divisor.chips[v] += r # Always restore state
+            if !winnable
                 return false
             end
-            divisor.chips[v] += r
         end
     else
-        for div in multiexponents(g.num_vertices, r)
-            divisor.chips .-= div
-            if !is_winnable(g, divisor, d)
+        n = g.num_vertices
+        
+        # 1. Pre-allocate the vector just ONCE.
+        div_chips = zeros(Int, n)
+        div_chips[1] = r # 2. Initialize to the first composition.
+
+        # 3. Loop by mutating `div_chips` in-place.
+
+        keep_going = true
+        while keep_going
+            divisor.chips .-= div_chips
+            winnable = is_winnable(g, divisor, ws)
+            divisor.chips .+= div_chips # Always restore state
+            if !winnable
                 return false
             end
-            divisor.chips .+= div
+            
+            # Get the next composition, and stop if we're at the end.
+            keep_going = next_composition!(div_chips)
         end
     end
     return true

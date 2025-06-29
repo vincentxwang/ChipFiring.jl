@@ -21,32 +21,51 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
     max_degree_to_check = isnothing(max_d) ? (r * n) : max_d
     genus = g.num_edges - g.num_vertices + 1
 
+    ws = Workspace(n)
+
     if r >= genus && !cgon
         return r + genus
     end
 
-    D = Divisor(zeros(Int, n))
-    D2 = deepcopy(D)
-
     for d in min_d:max_degree_to_check
         if verbose
-            # Calculate number of divisors without storing them
             num_divisors = binomial(BigInt(n + d - 1), d)
             println("Testing degree d = $d... (checking $num_divisors divisors)")
         end
         
-        # Iterate over all effective divisors of degree d without collecting them into an array.
-        for chips in multiexponents(n, d)
-            D.chips .= chips
-            if has_rank_at_least_r(g, D, r, cgon, D2)
+        # d=0 case
+        if d == 0
+            ws.d1.chips .= 0
+            if has_rank_at_least_r(g, r, cgon, ws)
+                if verbose; println("  SUCCESS: Found divisor of degree 0 with rank >= $r."); end
+                return 0
+            end
+            continue # Go to next degree
+        end
+
+        # 1. Pre-allocate the vector for chip combinations ONCE per degree `d`.
+        chips_vec = zeros(Int, n)
+        chips_vec[1] = d # 2. Initialize it to the first configuration (e.g., [d, 0, ..., 0]).
+
+        # 3. Use a `while` loop that mutates `chips_vec` in-place.
+        keep_going = true
+        while keep_going
+            # The body of the original loop, using `chips_vec`
+            ws.d1.chips .= chips_vec
+            if has_rank_at_least_r(g, r, cgon, ws)
                 if verbose; println("  SUCCESS: Found divisor of degree $d with rank >= $r."); end
                 return d
             end
+            
+            # Mutate to the next configuration and check if the loop should continue.
+            keep_going = next_composition!(chips_vec)
         end
+        ## --- END: Replaced loop --- ##
     end
     
     return -1 # Gonality not found within the checked range
 end
+
 
 
 """
@@ -92,23 +111,54 @@ it to already-burnt vertices.
     - `is_superstable::Bool`: `true` if the entire graph was burned.
     - `legals::Vector{Int}`: The indices of unburned vertices that form a legal firing.
 """
-function dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
+function dhar!(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace)
     n = g.num_vertices
-    burned = fill(false, n)
-    burned[source] = true
-
-    threats = fill(0, n)
-
-    for b in g.adj_list[source]
-        threats[b] += get_num_edges(g, source, b)
-    end
     
-    dhar_recursive!(g, divisor, source, burned, threats)
+    # Reuse the workspace arrays instead of allocating new ones.
+    burned = ws.burned
+    threats = ws.threats
+    worklist = ws.legals # Temporarily reuse `legals` as a work queue to save memory
+    
+    # Reset workspace arrays for this run
+    fill!(burned, false)
+    fill!(threats, 0)
+    empty!(worklist)
 
-    is_superstable = all(burned)
-    legals = findall(.!burned)
+    burned[source] = true
+    num_burned = 1
+    
+    push!(worklist, source)
+    head = 1
 
-    return is_superstable, legals
+    while head <= length(worklist)
+        u = worklist[head]
+        head += 1
+        for v in g.adj_list[u]
+            if !burned[v]
+                threats[v] += g.adj_matrix[u, v]
+                if divisor.chips[v] < threats[v]
+                    burned[v] = true
+                    push!(worklist, v)
+                    num_burned += 1
+                end
+            end
+        end
+    end
+
+    is_superstable = (num_burned == n)
+    
+    # Now, correctly populate the `legals` vector (which is `worklist`) in-place.
+    empty!(worklist) # Clear the temporary queue items
+    if !is_superstable
+        for i in 1:n
+            if !burned[i]
+                push!(worklist, i)
+            end
+        end
+    end # If superstable, the vector is correctly left empty.
+    
+    # `ws.legals` is now correctly populated without any new allocations.
+    return is_superstable, ws.legals
 end
 
 """
@@ -126,8 +176,9 @@ from the user-provided Python code.
 # Returns
 - `d::Vector{Int}`: The resulting divisor
 """
-function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, d::Divisor)
+function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
 
+    d = ws.d2
     d.chips .= divisor.chips
 
     # Stage 1: Benevolence : can have some performance improvements in two ways 1) debt-reduction trick. 2) keep track of negative nodes
@@ -142,10 +193,10 @@ function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, d::Divisor)
 
 
     # Stage 2: Relief
-    isSuperstable, legals = dhar(g, d, q)
+    isSuperstable, legals = dhar!(g, d, q, ws)
     while d.chips[q] < 0 && !isSuperstable
         lend!(g, d, legals)
-        isSuperstable, legals = dhar(g, d, q)
+        isSuperstable, legals = dhar!(g, d, q, ws)
     end
 
     return d
@@ -161,9 +212,9 @@ end
 Checks if a chip configuration is linearly equivalent to an
 effective divisor using a version of Dhar's burning algorithm.
 """
-function is_winnable(g::ChipFiringGraph, divisor::Divisor, d::Divisor)
-    q = 1
-    q_red = q_reduced(g, divisor, q, d)
+function is_winnable(g::ChipFiringGraph, divisor::Divisor, ws::Workspace)
+    q = 1 # can really set to anything
+    q_red = q_reduced(g, divisor, q, ws)
     if q_red.chips[q] >= 0
         return true
     else

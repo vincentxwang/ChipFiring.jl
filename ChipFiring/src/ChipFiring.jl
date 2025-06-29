@@ -1,6 +1,5 @@
 # module ChipFiring
 
-using Combinatorics
 using LinearAlgebra
 using Graphs
 
