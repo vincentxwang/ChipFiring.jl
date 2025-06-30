@@ -109,8 +109,8 @@ end
 ###### START SCRIPT #######
 
 function main()
-    input_filename = "7.txt"
-    output_filename = "7.out"
+    input_filename = "6.txt"
+    output_filename = "6.out"
 
     if !isfile(input_filename)
         println("Error: File '$input_filename' not found.")

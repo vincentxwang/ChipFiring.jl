@@ -24,6 +24,9 @@ using Test
 
         @test compute_gonality(g, max_d=3, verbose=true, cgon=true, r=2) == 2
         @test compute_gonality(g, max_d=3, verbose=true, r=2) == 3
+
+        # test max_d
+        @test compute_gonality(g, max_d=1, verbose=true, r=2) == -1
     end
 
 

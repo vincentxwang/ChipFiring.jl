@@ -15,15 +15,17 @@ Computes the `r`-th (default: 1) gonality of a graph `g`.
 
 # Returns
 - `Int`: The computed gonality of the graph. Returns -1 if not found within `max_d`.
+
+The result of compute_gonality may return r * n in the case when max_d is set to r * n - 1.
 """
 function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1, cgon=false)
     n = g.num_vertices
-    max_degree_to_check = isnothing(max_d) ? (r * n) : max_d
+    max_degree_to_check = isnothing(max_d) ? (r * n) - 1 : max_d
     genus = g.num_edges - g.num_vertices + 1
 
     ws = Workspace(n)
 
-    if r >= genus && !cgon
+    if r >= genus && !cgon && (r + genus <= max_degree_to_check)
         return r + genus
     end
 
@@ -60,7 +62,10 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
             # Mutate to the next configuration and check if the loop should continue.
             keep_going = next_composition!(chips_vec)
         end
-        ## --- END: Replaced loop --- ##
+    end
+
+    if max_degree_to_check == (r * n) - 1
+        return r * n
     end
     
     return -1 # Gonality not found within the checked range
