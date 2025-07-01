@@ -21,7 +21,7 @@ The result of compute_gonality may return r * n in the case when max_d is set to
 function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1, cgon=false)
     n = g.num_vertices
     max_degree_to_check = isnothing(max_d) ? (r * n) - 1 : max_d
-    genus = g.num_edges - g.num_vertices + 1
+    genus = compute_genus(g)
 
     ws = Workspace(n)
 

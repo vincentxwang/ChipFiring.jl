@@ -78,7 +78,7 @@ end
 """
     laplacian(g::ChipFiringGraph) -> 
 
-Returns the number of edges (multiplicity) between two vertices `u` and `v`.
+Returns the discrete Laplacian matrix of `g`.
 """
 function laplacian(g::ChipFiringGraph)
     return diagm(g.degree_list) - g.adj_matrix
@@ -94,3 +94,11 @@ function sprint_graph(g::ChipFiringGraph)
     return "Graph(V=$(g.num_vertices), E=$(g.num_edges), Edges=[$(join(edge_strs, ", "))])"
 end
 
+"""
+    compute_genus(g::ChipFiringGraph) -> 
+
+Returns the genus of the graph represented by `g`.
+"""
+function compute_genus(g::ChipFiringGraph)
+    return g.num_edges - g.num_vertices + 1
+end
