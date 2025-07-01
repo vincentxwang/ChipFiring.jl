@@ -3,7 +3,7 @@
 # LOVE http://combos.org/nauty. generates all graphs. 
 
 
-include("ChipFiring/src/ChipFiring.jl")
+include("../ChipFiring/src/ChipFiring.jl")
 
 function save_gon(g::ChipFiringGraph)
     gon1 = compute_gonality(g)

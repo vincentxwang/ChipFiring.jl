@@ -1,4 +1,6 @@
 Graph Gonality Analysis Results
+
+These are INCOMPLETE results of looking for ANY gonality savings.
 ================================
 
 Graph #1:
@@ -978,3 +980,318 @@ Graph #163:
   - Degree List: [2, 2, 2, 2, 4, 4, 6]
   - Result of results(): Tuple{Int64, Int64}[]
   - Associated graphs: String[]
+----------------------------------------
+Graph #164:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 3, 2, 2, 2, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #165:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 2, 2, 3, 4, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #166:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 2, 2, 2, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #167:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 2, 2, 3, 5, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #168:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 3, 2, 1, 3, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #169:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 2, 1, 4, 4, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #170:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 2, 1, 3, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #171:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 1, 1, 4, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #172:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 2, 1, 4, 5, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #173:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 2, 2, 2, 3, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #174:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 2, 2, 2, 4, 4, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #175:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 2, 2, 2, 3, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #176:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 2, 2, 1, 4, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #177:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 1, 2, 2, 4, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #178:
+  - Vertices: 7, Edges: 11
+  - Degree List: [2, 2, 2, 2, 4, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #179:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 2, 2, 2, 4, 5, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #180:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 2, 2, 4, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #181:
+  - Vertices: 7, Edges: 13
+  - Degree List: [3, 3, 2, 2, 4, 6, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #182:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 3, 3, 1, 3, 3, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #183:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 2, 2, 1, 4, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #184:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 3, 1, 4, 3, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #185:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 2, 1, 4, 4, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #186:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 3, 1, 4, 4, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #187:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 3, 2, 2, 3, 3, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #188:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 3, 2, 1, 4, 3, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #189:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 3, 1, 2, 4, 3, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #190:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 2, 2, 2, 4, 3, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #191:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 3, 1, 1, 4, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #192:
+  - Vertices: 7, Edges: 10
+  - Degree List: [3, 2, 2, 1, 4, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #193:
+  - Vertices: 7, Edges: 10
+  - Degree List: [2, 2, 2, 2, 4, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #194:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 2, 2, 4, 3, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #195:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 2, 1, 4, 4, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #196:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 2, 2, 2, 4, 4, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #197:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 2, 2, 4, 4, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #198:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 3, 2, 3, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #199:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 3, 1, 4, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #200:
+  - Vertices: 7, Edges: 11
+  - Degree List: [3, 3, 2, 2, 4, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #201:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 3, 2, 4, 4, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #202:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 3, 2, 3, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #203:
+  - Vertices: 7, Edges: 13
+  - Degree List: [3, 3, 3, 2, 4, 5, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #204:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 3, 1, 5, 4, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #205:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 2, 1, 5, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #206:
+  - Vertices: 7, Edges: 13
+  - Degree List: [3, 3, 3, 1, 5, 5, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #207:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 2, 2, 5, 4, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #208:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 2, 2, 2, 5, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #209:
+  - Vertices: 7, Edges: 13
+  - Degree List: [3, 3, 2, 2, 5, 5, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #210:
+  - Vertices: 7, Edges: 14
+  - Degree List: [3, 3, 3, 2, 5, 6, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #211:
+  - Vertices: 7, Edges: 12
+  - Degree List: [3, 3, 3, 3, 4, 4, 4]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #212:
+  - Vertices: 7, Edges: 13
+  - Degree List: [3, 3, 3, 3, 5, 4, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #213:
+  - Vertices: 7, Edges: 13
+  - Degree List: [3, 3, 3, 2, 5, 5, 5]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #214:
+  - Vertices: 7, Edges: 14
+  - Degree List: [3, 3, 3, 3, 5, 5, 6]
+  - Result of results(): Tuple{Int64, Int64}[]
+  - Associated graphs: String[]
+----------------------------------------
+Graph #215:
+  - Vertices: 7, Edges: 15
+  - Degree List: [3, 3, 3, 3, 6, 6, 6]
+Error processing Graph #215. Invalid format.
+----------------------------------------
+Graph #216:
+  - Vertices: 7, Edges: 6
+  - Degree List: [2, 2, 2, 1, 1, 1, 3]
