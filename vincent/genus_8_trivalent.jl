@@ -1,14 +1,22 @@
-# Some notes.
+# Some notes. 
+
+# This is a basic script for testing a list of graphs without doing anything fancy.
+
+# Modification: we test 1st gonality AND 2nd gonality savings.
 
 # LOVE http://combos.org/nauty. generates all graphs. 
 
 
+SUBDIVISIONS = 2
+
+
 include("../ChipFiring/src/ChipFiring.jl")
 
-function save_gon(g::ChipFiringGraph)
-    gon1 = compute_gonality(g)
-    gon2 = compute_gonality(subdivide(g, 2), max_d = (gon1 - 1))
+function save_gon(g::ChipFiringGraph, r)
+    gon1 = compute_gonality(g, r=r)
+    gon2 = compute_gonality(subdivide(g, SUBDIVISIONS), max_d = (gon1 - 1), r=r)
     return gon1, gon2
+    return -1, -1
 end
 
 
@@ -52,65 +60,11 @@ function parse_graph_line(line::String)
 end
 
 
-function process_multigraph_expansions(simple_graph::ChipFiringGraph, max_multiplicity::Int)
-    n = simple_graph.num_vertices
-    unique_edges = collect(Set(simple_graph.edge_list))
-    num_unique_edges = length(unique_edges)
-    results = Tuple{Int, Int}[]
-    results_string = String[]
-
-    println("Starting multigraph expansion for a graph with $n vertices and $num_unique_edges unique edges.")
-    println("Expanding each edge with multiplicity up to $max_multiplicity.")
-    println("This will generate up to $(((max_multiplicity)^num_unique_edges)) multigraphs.")
-
-    # A recursive helper to generate all combinations of multiplicities
-    function generate_and_check(edge_idx::Int, current_multiedge_list::Vector{Tuple{Int, Int}})
-        # Base case: if we have assigned a multiplicity to every unique edge
-        if edge_idx > num_unique_edges
-            # We have a complete multigraph, process it
-            # Skip if the edge list is empty
-            if !isempty(current_multiedge_list)
-                multigraph = ChipFiringGraph(n, current_multiedge_list)
-                gon1, gon2 = save_gon(multigraph)
-                if gon2 != -1
-                    println("Saved from $(gon1) to $(gon2)!")
-                    println(sprint_graph(multigraph))
-                    push!(results, (gon1, gon2))
-                    push!(results_string, sprint_graph(multigraph))
-                end
-            end
-            return
-        end
-
-        # Recursive step: iterate through all possible multiplicities for the current edge
-        current_edge = unique_edges[edge_idx]
-        for multiplicity in 1:max_multiplicity
-            # Add the current edge 'multiplicity' times
-            for _ in 1:multiplicity
-                push!(current_multiedge_list, current_edge)
-            end
-            
-            # Recurse to the next edge type
-            generate_and_check(edge_idx + 1, current_multiedge_list)
-            
-            # Backtrack: remove the edges added at this level to prepare for the next multiplicity
-            for _ in 1:multiplicity
-                pop!(current_multiedge_list)
-            end
-        end
-    end
-
-    # Start the recursion with the first edge and an empty list of edges
-    generate_and_check(1, Tuple{Int, Int}[])
-    println("Finished multigraph expansion.")
-    return results, results_string
-end
-
 ###### START SCRIPT #######
 
 function main()
-    input_filename = "6.txt"
-    output_filename = "6.out"
+    input_filename = "vincent/genus_8_trivalent.txt"
+    output_filename = "vincent/genus_8_trivalent.out"
 
     if !isfile(input_filename)
         println("Error: File '$input_filename' not found.")
@@ -146,14 +100,36 @@ function main()
                     write(outfile, "  - Vertices: $(g.num_vertices), Edges: $(g.num_edges)\n")
                     write(outfile, "  - Degree List: $(g.degree_list)\n")
 
+                    println("Checking graph #$i.")
+
+
                     # 3. Run the computation for the current graph.
-                    results, results_string = process_multigraph_expansions(g, 2)
+                    a, b = save_gon(g, 1)
+                    c, d = save_gon(g, 2)
+                    # e, f = save_gon(g, 3)
+
+                    if b != -1
+                        write(outfile, "FIRST GONALITY SAVINGS! $a -> $b\n")
+                        println("FIRST GONALITY SAVINGS")
+                        write(outfile, "$(sprint_graph(g))\n")
+                    end
+
+                    if d != -1
+                        write(outfile, "SECOND GONALITY SAVINGS, $c -> $d\n")
+                        println("SECOND GONALITY SAVINGS")
+                        write(outfile, "$(sprint_graph(g))\n")
+                    end
+
+                    # if f != -1
+                    #     write(outfile, "THIRD GONALITY SAVINGS, $e -> $f\n")
+                    #     println("THIRD GONALITY SAVINGS")
+                    #     write(outfile, "$(sprint_graph(g))\n")
+                    # end
 
 
-                    write(outfile, "  - Result of results(): $results\n")
-                    write(outfile, "  - Associated graphs: $results_string\n")
 
                     write(outfile, "----------------------------------------\n")
+
                     
                     
                     # Increment the counter upon successful processing

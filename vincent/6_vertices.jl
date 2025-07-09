@@ -3,12 +3,19 @@
 # LOVE http://combos.org/nauty. generates all graphs. 
 
 
+GENUS = 8
+MULTIPLICITY = 6
+SUBDIVISIONS = 2
+
 include("../ChipFiring/src/ChipFiring.jl")
 
 function save_gon(g::ChipFiringGraph)
-    gon1 = compute_gonality(g)
-    gon2 = compute_gonality(subdivide(g, 2), max_d = (gon1 - 1))
-    return gon1, gon2
+    if compute_genus(g) <= GENUS
+        gon1 = compute_gonality(g)
+        gon2 = compute_gonality(subdivide(g, SUBDIVISIONS), max_d = (gon1 - 1))
+        return gon1, gon2
+    end
+    return -1, -1
 end
 
 
@@ -109,8 +116,8 @@ end
 ###### START SCRIPT #######
 
 function main()
-    input_filename = "7.txt"
-    output_filename = "7.out"
+    input_filename = "vincent/7.txt"
+    output_filename = "vincent/7_vertices_genus_8.out"
 
     if !isfile(input_filename)
         println("Error: File '$input_filename' not found.")
@@ -147,13 +154,18 @@ function main()
                     write(outfile, "  - Degree List: $(g.degree_list)\n")
 
                     # 3. Run the computation for the current graph.
-                    results, results_string = process_multigraph_expansions(g, 2)
+                    if compute_genus(g) < GENUS
+                        results, results_string = process_multigraph_expansions(g, GENUS - compute_genus(g))
 
+                        write(outfile, "  - Result of results(): $results\n")
+                        write(outfile, "  - Associated graphs: $results_string\n")
 
-                    write(outfile, "  - Result of results(): $results\n")
-                    write(outfile, "  - Associated graphs: $results_string\n")
+                    else
+                        write(outfile, " - Genus too high: skipped.")
+                    end
 
                     write(outfile, "----------------------------------------\n")
+
                     
                     
                     # Increment the counter upon successful processing
