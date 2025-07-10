@@ -60,10 +60,7 @@ end
 Returns a vector containing the indices of the neighbors of vertex `v`.
 """
 function neighbors(g::ChipFiringGraph, v::Int)
-    if v < 1 || v > g.num_vertices
-        error("Vertex index $v out of bounds (1 to $(g.num_vertices)).")
-    end
-    return findall(x -> x > 0, g.adj_matrix[v, :])
+    return g.adj_list[v]
 end
 
 """
@@ -76,4 +73,32 @@ function get_num_edges(g::ChipFiringGraph, u::Int, v::Int)
         error("Vertex index out of bounds (1 to $(g.num_vertices)).")
     end
     return g.adj_matrix[u, v]
+end
+
+"""
+    laplacian(g::ChipFiringGraph) -> 
+
+Returns the discrete Laplacian matrix of `g`.
+"""
+function laplacian(g::ChipFiringGraph)
+    return diagm(g.degree_list) - g.adj_matrix
+end
+
+"""
+    sprint_graph(g::ChipFiringGraph) -> String
+
+Returns a concise, single-line string representation of a ChipFiringGraph.
+"""
+function sprint_graph(g::ChipFiringGraph)
+    edge_strs = [string(e) for e in g.edge_list]
+    return "Graph(V=$(g.num_vertices), E=$(g.num_edges), Edges=[$(join(edge_strs, ", "))])"
+end
+
+"""
+    compute_genus(g::ChipFiringGraph) -> 
+
+Returns the genus of the graph represented by `g`.
+"""
+function compute_genus(g::ChipFiringGraph)
+    return g.num_edges - g.num_vertices + 1
 end

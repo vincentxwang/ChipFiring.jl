@@ -149,13 +149,18 @@ using Test
         ]
         g = ChipFiringGraph(cube_adj_matrix)
 
-        divisor1 = Divisor([1, 0, 1, 0, 0, 1, 0, 1])
+        ws = Workspace(g.num_vertices)
 
-        @test has_rank_at_least_r(g, divisor1, 1, false) == true
+        ws.d1.chips .= [1, 0, 1, 0, 0, 1, 0, 1]
 
-        divisor2 = Divisor([1, 0, 0, 0, 0, 1, 0, 1])
 
-        @test has_rank_at_least_r(g, divisor2, 1, false) == false
+
+        @test has_rank_at_least_r(g, 1, false, ws) == true
+
+
+        ws.d1.chips .= [1, 0, 0, 0, 0, 1, 0, 1]
+
+        @test has_rank_at_least_r(g, 1, false, ws) == false
     end
 
     @testset "dhar 1 (trivial cases)" begin
@@ -170,15 +175,16 @@ using Test
         
         # Test case that should NOT be super-stable (does not fully burn)
         divisor1 = Divisor([1, 1, 1, 1])
-        is_superstable1, legals1 = dhar(g, divisor1, 1)
+        ws = Workspace(4)
+        is_superstable1 = dhar!(g, divisor1, 1, ws)
         @test is_superstable1 == false
-        @test sort(legals1) == [2, 3, 4] # Only source vertex 1 burns
+        @test sort(ws.legals) == [2, 3, 4] # Only source vertex 1 burns
         
         # Test case that SHOULD be super-stable (fully burns)
         divisor2 = Divisor([0, 0, 0, 0])
-        is_superstable2, legals2 = dhar(g, divisor2, 1)
+        is_superstable2 = dhar!(g, divisor2, 1, ws)
         @test is_superstable2 == true
-        @test isempty(legals2)
+        @test isempty(ws.legals)
     end
 
     @testset "dhar 2 (house)" begin
@@ -202,9 +208,11 @@ using Test
         g_house = ChipFiringGraph(house_adj_matrix)
 
         divisor = Divisor([0, 0, 2, 0, 1])
-        is_superstable, legals = dhar(g_house, divisor, 1)
+        ws = Workspace(5)
+
+        is_superstable = dhar!(g_house, divisor, 1, ws)
         @test is_superstable == false
-        @test sort(legals) == [3, 5]
+        @test sort(ws.legals) == [3, 5]
     end
 
     @testset "q-reduced (house)" begin
@@ -226,50 +234,9 @@ using Test
         0 0 1 1 0
     ]
         g_house = ChipFiringGraph(house_adj_matrix)
+        ws = Workspace(g_house.num_vertices)
 
         divisor = Divisor([1, 0, -1, -2, 3])
-        @test q_reduced(g_house, divisor, 1).chips == [-1, 0, 0, 2, 0]
+        @test q_reduced(g_house, divisor, 1, ws).chips == [-1, 0, 0, 2, 0]
     end
-end
-
-using BenchmarkTools
-
-
-for i in 1:100
-    @profile compute_gonality(g_house)
-
-end
-
-function profile_test()
-    icosahedron_adj_matrix =[
-            0 1 1 1 1 0 0 0 1 0 0 0;
-            1 0 1 0 1 1 1 0 0 0 0 0;
-            1 1 0 0 0 0 1 1 1 0 0 0;
-            1 0 0 0 1 0 0 0 1 1 1 0;
-            1 1 0 1 0 1 0 0 0 1 0 0;
-            0 1 0 0 1 0 1 0 0 1 0 1;
-            0 1 1 0 0 1 0 1 0 0 0 1;
-            0 0 1 0 0 0 1 0 1 0 1 1;
-            1 0 1 1 0 0 0 1 0 0 1 0;
-            0 0 0 1 1 1 0 0 0 0 1 1;
-            0 0 0 1 0 0 0 1 1 1 0 1;
-            0 0 0 0 0 1 1 1 0 1 1 0
-        ]
-    g = ChipFiringGraph(icosahedron_adj_matrix)
-    compute_gonality(g)
-end
-
-@profview profile_test()
-
-
-@btime profile_test()
-
-@testset "for fun" begin
-    adj = [
-    0 2 1;
-    2 0 1;
-    1 1 0;
-]
-g = ChipFiringGraph(adj)
-compute_gonality(g, verbose=true)
 end

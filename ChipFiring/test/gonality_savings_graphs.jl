@@ -47,7 +47,7 @@ using Test
         @test compute_gonality(s2, max_d=5, verbose=true) == 4
     end
 
-    @testset "Ralph's Tricycleish 5 to 4" 
+    @testset "Ralph's Tricycleish 5 to 4" begin
         num_vertices = 7
         edge_list = [(1,2), (1,6), (1,6), (1,6), (1,7), (2,3), (2,3), (2,3), (3,4), (3,7), (4,5), (4,5), (4,5), (5,6), (5,7)]
         g = ChipFiringGraph(num_vertices, edge_list)
@@ -58,6 +58,8 @@ using Test
         @test compute_gonality(s2, max_d=5, verbose=true) == 4
    
     end 
+end
+
 
     @testset "Charlotte's web" begin
         num_vertices = 11
