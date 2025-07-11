@@ -75,6 +75,17 @@ function has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspa
 end
 
 """
+    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool) -> Bool
+Given a ChipFiringGraph `g` and Divisor `d`, returns a boolean determining whether or not `d` has rank at least
+`r`. Set `cgon` to be true if we are interested in concentrated rank.
+"""
+function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool)
+    ws = Workspace(g.num_vertices)
+    ws.d1.chips .= d.chips
+    return has_rank_at_least_r(g, r, cgon, ws)
+end
+
+"""
     subdivide(G::ChipFiringGraph, subdivisions::Int)
 
 Given a ChipFiring object G, produces another ChipFiring object which is an n-uniform subdivision of G.
