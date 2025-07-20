@@ -35,11 +35,11 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
             println("Testing degree d = $d... (checking $num_divisors divisors)")
         end
         
-        # d=0 case
+        # d = 0 case
         if d == 0
             ws.d1.chips .= 0
             if has_rank_at_least_r(g, r, cgon, ws)
-                if verbose; println("  SUCCESS: Found divisor of degree 0 with rank >= $r."); end
+                if verbose; println("SUCCESS: Found divisor of degree 0 with rank >= $r."); end
                 return 0
             end
             continue # Go to next degree
@@ -47,7 +47,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
 
         # 1. Pre-allocate the vector for chip combinations ONCE per degree `d`.
         chips_vec = zeros(Int, n)
-        chips_vec[1] = d # 2. Initialize it to the first configuration (e.g., [d, 0, ..., 0]).
+        chips_vec[1] = d # initialize chips_vec to [d, 0, 0, ..., 0].
 
         # 3. Use a `while` loop that mutates `chips_vec` in-place.
         keep_going = true
@@ -55,11 +55,11 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
             # The body of the original loop, using `chips_vec`
             ws.d1.chips .= chips_vec
             if has_rank_at_least_r(g, r, cgon, ws)
-                if verbose; println("  SUCCESS: Found divisor of degree $d with rank >= $r."); end
+                if verbose; println("SUCCESS: Found divisor of degree $d with rank >= $r. Divisor: $chips_vec"); end
                 return d
             end
-            
-            # Mutate to the next configuration and check if the loop should continue.
+
+            # mutates chip_vec to be the next configuration to check
             keep_going = next_composition!(chips_vec)
         end
     end
@@ -68,7 +68,8 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         return r * n
     end
     
-    return -1 # Gonality not found within the checked range
+    # failed to find divisor
+    return -1
 end
 
 
@@ -194,7 +195,7 @@ function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
     find_negative_vertices!(ws.firing_set, g, d, q)
 
     while !isempty(ws.firing_set)
-        # Fire all non-sink stable vertices
+        # fires all non-sink stable vertices
         borrow!(g, d, ws.firing_set)
         
         # Subsequent checks also populate in-place, without new allocations.
@@ -218,7 +219,7 @@ Finds all vertices with negative chips (excluding the sink `q`) and pushes them
 into the pre-allocated `out_vec`. This is a non-allocating operation.
 """
 function find_negative_vertices!(out_vec::Vector{Int}, g::ChipFiringGraph, d::Divisor, q::Int)
-    # Clear the vector of any old data before reusing it.
+
     empty!(out_vec)
     
     for i in 1:g.num_vertices
@@ -234,7 +235,7 @@ Checks if a chip configuration is linearly equivalent to an
 effective divisor using a version of Dhar's burning algorithm.
 """
 function is_winnable(g::ChipFiringGraph, divisor::Divisor, ws::Workspace)
-    q = 1 # can really set to anything
+    q = 1 # can really set to anything. 1 arbitrary
     q_red = q_reduced(g, divisor, q, ws)
     if q_red.chips[q] >= 0
         return true

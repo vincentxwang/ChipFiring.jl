@@ -6,10 +6,10 @@ Lends (fires) a single vertex `v`.
 function lend!(g::ChipFiringGraph, d::Divisor, v::Int)
     deg_v = g.degree_list[v]
 
-    # Vertex v loses `deg_v` chips
+    # subtract chips on v
     d.chips[v] -= deg_v
 
-    # Distribute chips to neighbors
+    # distribute chips to neighbors
     for j in g.adj_list[v]
         d.chips[j] += g.adj_matrix[v, j]
     end
@@ -34,10 +34,10 @@ Borrows from a single vertex `v`.
 function borrow!(g::ChipFiringGraph, d::Divisor, v::Int)
     deg_v = g.degree_list[v]
 
-    # Vertex v loses `deg_v` chips
+    # add chips on v
     d.chips[v] += deg_v
 
-    # Distribute chips to neighbors
+    # neighbors lose chips
     for j in g.adj_list[v]
         d.chips[j] -= g.adj_matrix[v, j]
     end

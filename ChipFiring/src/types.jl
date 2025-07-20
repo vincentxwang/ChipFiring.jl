@@ -36,7 +36,7 @@ struct ChipFiringGraph
     edge_list::Vector{Tuple{Int, Int}}
     degree_list::Vector{Int}
 
-
+    # Constructor that takes in a multiplicity matrix
     function ChipFiringGraph(multiplicity_matrix::Matrix{Int})
         num_vertices = size(multiplicity_matrix, 1)
         num_edges = sum(multiplicity_matrix)/2
@@ -45,19 +45,18 @@ struct ChipFiringGraph
             error("Multiplicity matrix must be square.")
         end
         if any(multiplicity_matrix .!= multiplicity_matrix')
-            error("Multiplicity matrix is not symmetric. The graph will be treated as directed.")
+            error("Multiplicity matrix is not symmetric. The graph will be treated as directed, but this may cause problems.")
         end
 
         adj_list = [Int[] for _ in 1:num_vertices]
         edge_list = Tuple{Int, Int}[]
 
+        # Logic for creating the edge list from multiplicity matrix
         for i in 1:num_vertices
             for j in 1:num_vertices
                 if multiplicity_matrix[i,j] != 0
-                    # Add to adjacency list for both vertices
                     push!(adj_list[i], j)
                     if i < j
-                        # Add to edges list once (but a certain number of times!)
                         for _ in 1:multiplicity_matrix[i,j]
                             push!(edge_list, (i,j))
                         end
@@ -75,6 +74,7 @@ struct ChipFiringGraph
         new(multiplicity_matrix, num_vertices, num_edges, adj_list, edge_list, deg_list)
     end
 
+    # Constructor from edge list
     function ChipFiringGraph(num_vertices::Int, edge_list::Vector{Tuple{Int, Int}})
         multiplicity_matrix = zeros(Int, num_vertices, num_vertices)
         for (a,b) in edge_list
