@@ -73,7 +73,6 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
 end
 
 
-
 """
     dhar_recursive!(g, divisor, source, burned, threats)
 
@@ -198,7 +197,7 @@ function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
         # fires all non-sink stable vertices
         borrow!(g, d, ws.firing_set)
         
-        # Subsequent checks also populate in-place, without new allocations.
+        # modifies ws.firing_set in-place
         find_negative_vertices!(ws.firing_set, g, d, q)
     end
 

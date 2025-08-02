@@ -1,3 +1,5 @@
+import Base: show
+
 """
     lend!(g::ChipFiringGraph, d::Divisor, v::Int)
 
@@ -76,7 +78,7 @@ function get_num_edges(g::ChipFiringGraph, u::Int, v::Int)
 end
 
 """
-    laplacian(g::ChipFiringGraph) -> 
+    laplacian(g::ChipFiringGraph) -> Matrix{Int}
 
 Returns the discrete Laplacian matrix of `g`.
 """
@@ -95,9 +97,20 @@ function sprint_graph(g::ChipFiringGraph)
 end
 
 """
-    compute_genus(g::ChipFiringGraph) -> 
+    show(io::IO, g::ChipFiringGraph)
 
-Returns the genus of the graph represented by `g`.
+Provides a concise, single-line string representation of a ChipFiringGraph.
+"""
+function show(io::IO, g::ChipFiringGraph)
+    edge_strs = [string(e) for e in g.edge_list]
+    print(io, "Graph(V=$(g.num_vertices), E=$(g.num_edges), Edges=[$(join(edge_strs, ", "))])")
+end
+
+"""
+    compute_genus(g::ChipFiringGraph) -> Int
+
+Returns the genus (in the topological sense) of the graph represented by `g`. Note that this is 
+*not* the typical definition of graph genus.
 """
 function compute_genus(g::ChipFiringGraph)
     return g.num_edges - g.num_vertices + 1

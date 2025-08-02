@@ -1,7 +1,7 @@
 """
-    next_multiexponent!(v::Vector{Int}) -> Bool
+    next_composition!(v::Vector{Int}) -> Bool
 
-Mutates the vector `v` into the next multiexponent configuration in-place.
+Mutates the vector `v` into the next composition in-place.
 Assumes the sum of elements should remain constant.
 
 # Returns
@@ -86,28 +86,48 @@ function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool)
 end
 
 """
-    subdivide(G::ChipFiringGraph, subdivisions::Int)
+    rank(g::ChipFiringGraph, d::Divisor)
+
+Given a ChipFiringGraph `g` and Divisor `d`, returns the rank (in the sense of Baker and Norine) of `d` on `g`.
+See Divisors and Sandpiles by Corry and Perkinson.
+"""
+function rank(g::ChipFiringGraph, d::Divisor)
+    if !is_winnable(g, d)
+        return -1
+    else
+        rank = 1
+        while true
+            if !has_rank_at_least_r(g, d, rank, false)
+                return rank - 1
+            end
+            rank += 1
+        end
+    end
+end
+
+"""
+    subdivide(g::ChipFiringGraph, subdivisions::Int)
 
 Given a ChipFiring object G, produces another ChipFiring object which is an n-uniform subdivision of G.
 
 # Arguments
-- `G::ChipFiringGraph` the original Graph
+- `g::ChipFiringGraph` the original Graph
 - `subdivisions::Int` number of subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc)
 
 # Returns subdivided graph
 """
-function subdivide(G::ChipFiringGraph, subdivisions::Int)
+function subdivide(g::ChipFiringGraph, subdivisions::Int)
     # if no subdivisions 
     if subdivisions <= 1
-        return G
+        return g
     end
 
-    n = G.num_vertices
-    m = G.num_edges
+    n = g.num_vertices
+    m = g.num_edges
 
     N = n + (subdivisions-1)*m # new number of edges
 
-    edge_list = G.edge_list
+    edge_list = g.edge_list
     new_edge_list = Vector{Tuple{Int, Int}}()
 
     new_vertex = n+1 # label for new vertex
@@ -125,33 +145,4 @@ end
     # total vertices is now n + (subdivisions-1)*m
     new_G = ChipFiringGraph(N, new_edge_list)
     return new_G
-end
-
-"""
-    to_graphjl(g::ChipFiringGraph)
-
-Converts a `ChipFiringGraph` into a `Graphs.Graph` object for use with the
-Graphs.jl library.
-
-The `Graphs.Graph` type represents a simple graph, so any edge multiplicities
-in the `ChipFiringGraph` are ignored.
-
-# Arguments
-- `g::ChipFiringGraph`: The `ChipFiringGraph` to convert.
-
-# Returns
-- `Graphs.Graph`: A simple graph representation of `g`.
-"""
-function to_graphjl(g::ChipFiringGraph)
-    # Create a new simple graph with the same number of vertices
-    jl_graph = SimpleGraph(g.num_vertices)
-    
-    # Add each edge from the ChipFiringGraph's edge list.
-    # The edge_list may contain duplicates if the original graph had multiplicities,
-    # but add_edge! handles this by simply not adding an edge that already exists.
-    for (u, v) in g.edge_list
-        add_edge!(jl_graph, u, v)
-    end
-    
-    return jl_graph
 end
