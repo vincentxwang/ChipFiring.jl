@@ -36,7 +36,7 @@ end
 """
     has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace) -> Bool
 
-Internal helper for `compute_gonality`. Checks if a divisor `ws.d1` has rank at least 1.
+Internal helper for `compute_gonality`. Checks if a divisor `ws.d1` has rank at least `r`.
 """
 function has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace)
     divisor = ws.d1

@@ -72,32 +72,8 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
     return -1
 end
 
-
 """
-    dhar_recursive!(g, divisor, source, burned, threats)
-
-Internal recursive helper for the `dhar` algorithm. It explores the graph from
-the `source` vertex, modifying the `burned` vector in-place.
-"""
-function dhar_recursive!(g::ChipFiringGraph, d::Divisor, source::Int, burned::Vector{Bool}, threats::Vector{Int})
-    
-    for v in g.adj_list[source]
-        if burned[v]
-            continue 
-        end
-
-        if d.chips[v] < threats[v]
-            burned[v] = true
-            for b in neighbors(g,v)
-                threats[b] += get_num_edges(g, v, b)
-            end
-            dhar_recursive!(g, d, v, burned, threats)
-        end
-    end
-end
-
-"""
-    dhar(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace)
+    dhar!(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace) -> Bool
 
 Performs a recursive burn starting from a `source` vertex to determine if a `divisor`
 is super-stable with respect to that source.
@@ -170,16 +146,42 @@ function dhar!(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace)
 end
 
 """
+    dhar(g::ChipFiringGraph, divisor::Divisor, source::Int) -> Tuple{Bool, Vector{Int}}
+
+Performs a burn starting from a `source` vertex to determine if a `divisor`
+is super-stable.
+
+This is a convenience wrapper that allocates a temporary workspace. For performance-critical
+code where this function is called repeatedly, use the version that accepts a 
+`Workspace` argument.
+
+# Arguments
+- `g::ChipFiringGraph`: The graph structure.
+- `divisor::Divisor`: The chip configuration to test.
+- `source::Int`: The vertex (1-indexed) from which to start the burn.
+
+# Returns
+- The first element is `true` if the divisor is super-stable, `false` otherwise.
+- The second element is a vector of unburned vertices. This vector is empty if the divisor is super-stable.
+"""
+function dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
+    ws = Workspace(g.num_vertices)
+
+    is_superstable = dhar!(g, divisor, source, ws)
+
+    return is_superstable, copy(ws.legals)
+end
+
+"""
     q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace)
 
-Finds an equivalent, q-reduced effective divisor to the one given, based on the algorithm
-from the user-provided Python code.
+Finds the equivalent, q-reduced effective divisor to the one given. Based off the algorithm in https://github.com/matthew-pisano/ChipFiring/tree/master.
 
 # Arguments
 - `g`: The graph structure.
 - `divisor`: The initial chip configuration.
 - `q`: The sink vertex.
-- `d`: Any dummy divisor (to reduce allocations).
+- `ws`: The workspace containing pre-allocated arrays.
 
 # Returns
 - `d::Vector{Int}`: The resulting divisor
@@ -212,6 +214,30 @@ function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
 end
 
 """
+    q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace)
+
+Finds the equivalent, q-reduced effective divisor to the one given, based on the algorithm
+from the user-provided Python code.
+
+This is a convenience wrapper that allocates a temporary workspace. For performance-critical
+code where this function is called repeatedly, use the version that accepts a 
+`Workspace` argument.
+
+# Arguments
+- `g`: The graph structure.
+- `divisor`: The initial chip configuration.
+- `q`: The sink vertex.
+- `ws`: The workspace containing pre-allocated arrays.
+
+# Returns
+- `d::Vector{Int}`: The resulting divisor
+"""
+function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int)
+    return q_reduced(g, divisor, q, Workspace(g.num_vertices))
+end
+
+
+"""
     find_negative_vertices!(out_vec::Vector{Int}, g::ChipFiringGraph, d::Divisor, q::Int)
 
 Finds all vertices with negative chips (excluding the sink `q`) and pushes them
@@ -227,6 +253,7 @@ function find_negative_vertices!(out_vec::Vector{Int}, g::ChipFiringGraph, d::Di
         end
     end
 end
+
 """
     is_winnable(g::ChipFiringGraph, divisor::Divisor, ws::Workspace) -> Bool
 
@@ -246,7 +273,12 @@ end
 """
     is_winnable(g::ChipFiringGraph, divisor::Divisor) -> Bool
 
-Wrapper.
+Checks if a chip configuration is linearly equivalent to an
+effective divisor using a version of Dhar's burning algorithm.
+
+This is a convenience wrapper that allocates a temporary workspace. For performance-critical
+code where this function is called repeatedly, use the version that accepts a 
+`Workspace` argument.
 """
 function is_winnable(g::ChipFiringGraph, divisor::Divisor)
     is_winnable(g, divisor, Workspace(g.num_vertices))
