@@ -36,7 +36,7 @@ end
 """
     has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace) -> Bool
 
-Internal helper for `compute_gonality`. Checks if a divisor `ws.d1` has rank at least `r`.
+Checks if a divisor `ws.d1` has rank at least `r`.
 """
 function has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace)
     divisor = ws.d1
@@ -67,7 +67,6 @@ function has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspa
                 return false
             end
             
-            # Get the next composition, and stop if we're at the end.
             keep_going = next_composition!(div_chips)
         end
     end
@@ -77,9 +76,11 @@ end
 """
     has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool) -> Bool
 Given a ChipFiringGraph `g` and Divisor `d`, returns a boolean determining whether or not `d` has rank at least
-`r`. Set `cgon` to be true if we are interested in concentrated rank.
+`r`. 
+
+Set `cgon` to be true if we are interested in concentrated rank. 
 """
-function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool)
+function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int; cgon=false)
     ws = Workspace(g.num_vertices)
     ws.d1.chips .= d.chips
     return has_rank_at_least_r(g, r, cgon, ws)
@@ -90,14 +91,16 @@ end
 
 Given a ChipFiringGraph `g` and Divisor `d`, returns the rank (in the sense of Baker and Norine) of `d` on `g`.
 See Divisors and Sandpiles by Corry and Perkinson.
+
+Set `cgon` to be true if we are interested in concentrated rank.
 """
-function rank(g::ChipFiringGraph, d::Divisor)
+function rank(g::ChipFiringGraph, d::Divisor; cgon=false)
     if !is_winnable(g, d)
         return -1
     else
         rank = 1
         while true
-            if !has_rank_at_least_r(g, d, rank, false)
+            if !has_rank_at_least_r(g, d, rank, cgon)
                 return rank - 1
             end
             rank += 1

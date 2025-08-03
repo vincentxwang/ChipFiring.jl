@@ -126,47 +126,40 @@ struct Workspace
     initializes all necessary temporary arrays.
     """
     function Workspace(N::Int)
-        # The main temporary divisor, initialized with N zeros.
+        # Temporary divisors
         d1 = Divisor(zeros(Int, N))
         d2 = Divisor(zeros(Int, N))
         
-        # An empty integer vector for the firing set. It will grow as needed.
+        # For the benevolence loop in q_reduce!
         firing_set = Int[]
         
-        # A boolean vector of size N, all set to false.
+        # Stores burned in dhar!
         burned = fill(false, N)
         
-        # An integer vector of size N, all set to zero.
+        # Stores threats in dhar!
         threats = zeros(Int, N)
         
-        # An empty integer vector for legal firings. It will also grow as needed.
+        # Stores legal firings in dhar!
         legals = Int[]
         
-        # Call the default constructor with the newly created fields.
         new(d1, d2, firing_set, burned, threats, legals)
     end
 
     """
     clear!(ws::Workspace)
 
-    Resets all fields in the `Workspace` to their default initial state, allowing the
-    workspace to be reused for a new, independent computation. This is a non-allocating
-    operation.
+    Resets all fields in the `Workspace` to their default initial states.
     """
     function clear!(ws::Workspace)
-        # Reset the chip counts in both divisor workspaces to zero.
         fill!(ws.d1.chips, 0)
         fill!(ws.d2.chips, 0)
         
-        # Empty the dynamically sized vectors.
         empty!(ws.firing_set)
         empty!(ws.legals)
         
-        # Reset the fixed-size boolean and integer vectors.
         fill!(ws.burned, false)
         fill!(ws.threats, 0)
         
-        # The function implicitly returns `nothing`.
         return
     end
 end
