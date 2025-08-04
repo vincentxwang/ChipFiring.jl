@@ -87,16 +87,6 @@ function laplacian(g::ChipFiringGraph)
 end
 
 """
-    sprint_graph(g::ChipFiringGraph) -> String
-
-Returns a concise, single-line string representation of a ChipFiringGraph.
-"""
-function sprint_graph(g::ChipFiringGraph)
-    edge_strs = [string(e) for e in g.edge_list]
-    return "Graph(V=$(g.num_vertices), E=$(g.num_edges), Edges=[$(join(edge_strs, ", "))])"
-end
-
-"""
     show(io::IO, g::ChipFiringGraph)
 
 Provides a concise, single-line string representation of a ChipFiringGraph.

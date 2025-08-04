@@ -4,12 +4,12 @@
 A structure to represent the underlying graph of a chip-firing graph.
 
 This struct provides multiple representations of the graph's structure to suit different
-computational needs. It is designed for undirected graphs, and the input multiplicity
-matrix is expected to be symmetric.
+computational needs. It is designed for undirected, connected graphs, and the input
+multiplicity matrix is expected to be symmetric.
 
 # Fields
-- `graph::Matrix{Int}`: The `n x n` multiplicity matrix, where `graph[i, j]` is the
-  number of edges between vertex `i` and vertex `j`.
+- `adj_matrix::Matrix{Int}`: The `n x n` multiplicity matrix, where `adj_matrix[i, j]` is
+  the number of edges between vertex `i` and vertex `j`.
 - `num_vertices::Int`: The number of vertices in the graph, `n`.
 - `num_edges::Int`: The total number of edges in the graph.
 - `adj_list::Vector{Vector{Int}}`: An adjacency list where `adj_list[i]` contains the
@@ -23,7 +23,7 @@ matrix is expected to be symmetric.
 # Constructors
 - `ChipFiringGraph(multiplicity_matrix::Matrix{Int})`: Constructs a `ChipFiringGraph`
   from a square, symmetric multiplicity matrix. Throws an error if the matrix is not
-  square or not symmetric.
+  square, not symmetric, or if the graph is not connected.
 - `ChipFiringGraph(num_vertices::Int, edge_list::Vector{Tuple{Int, Int}})`: Constructs
   a `ChipFiringGraph` from a list of edges and the total number of vertices.
 """
@@ -39,7 +39,6 @@ struct ChipFiringGraph
     # Constructor that takes in a multiplicity matrix
     function ChipFiringGraph(multiplicity_matrix::Matrix{Int})
         num_vertices = size(multiplicity_matrix, 1)
-        num_edges = sum(multiplicity_matrix)/2
 
         if size(multiplicity_matrix, 2) != num_vertices
             error("Multiplicity matrix must be square.")
@@ -48,28 +47,51 @@ struct ChipFiringGraph
             error("Multiplicity matrix is not symmetric. The graph will be treated as directed, but this may cause problems.")
         end
 
+        num_edges = div(sum(multiplicity_matrix), 2)
+
         adj_list = [Int[] for _ in 1:num_vertices]
         edge_list = Tuple{Int, Int}[]
 
-        # Logic for creating the edge list from multiplicity matrix
+        # Logic for creating the adjacency and edge lists from the multiplicity matrix
         for i in 1:num_vertices
-            for j in 1:num_vertices
-                if multiplicity_matrix[i,j] != 0
+            for j in i:num_vertices
+                if multiplicity_matrix[i,j] > 0
                     push!(adj_list[i], j)
-                    if i < j
-                        for _ in 1:multiplicity_matrix[i,j]
-                            push!(edge_list, (i,j))
-                        end
+                    if i != j
+                        push!(adj_list[j], i)
+                    end
+                    for _ in 1:multiplicity_matrix[i,j]
+                        push!(edge_list, (i,j))
                     end
                 end
             end
         end
-
-        deg_list = [0 for _ in 1:num_vertices]
-
-        for i in 1:num_vertices
-            deg_list[i] = sum(multiplicity_matrix[i, :])
+        
+        # Check for graph connectivity using bfs
+        if num_vertices > 1
+            q = [1] 
+            visited = falses(num_vertices)
+            visited[1] = true
+            count = 1
+            
+            while !isempty(q)
+                u = popfirst!(q)
+                for v in adj_list[u]
+                    if !visited[v]
+                        visited[v] = true
+                        count += 1
+                        push!(q, v)
+                    end
+                end
+            end
+            
+            if count < num_vertices
+                error("Multiplicity matrix is disconnected.")
+            end
         end
+
+
+        deg_list = [sum(multiplicity_matrix[i, :]) for i in 1:num_vertices]
         
         new(multiplicity_matrix, num_vertices, num_edges, adj_list, edge_list, deg_list)
     end
@@ -84,7 +106,6 @@ struct ChipFiringGraph
         ChipFiringGraph(multiplicity_matrix)
     end
 end
-
 """
     Divisor
 

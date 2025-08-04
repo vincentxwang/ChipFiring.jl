@@ -8,10 +8,10 @@ using Test
         #   |    |
         #   4 -- 3
         multiplicity_matrix = [
-            0 2 0 1;  # vertex 1
-            2 0 1 0;  # vertex 2
-            0 1 0 1;  # vertex 3
-            1 0 1 0   # vertex 4
+            0 2 0 1;
+            2 0 1 0;
+            0 1 0 1;
+            1 0 1 0   
         ]
         g = ChipFiringGraph(multiplicity_matrix)
 
@@ -149,18 +149,9 @@ using Test
         ]
         g = ChipFiringGraph(cube_adj_matrix)
 
-        ws = Workspace(g.num_vertices)
+        @test has_rank_at_least_r(g, Divisor([1, 0, 1, 0, 0, 1, 0, 1]), 1) == true
 
-        ws.d1.chips .= [1, 0, 1, 0, 0, 1, 0, 1]
-
-
-
-        @test has_rank_at_least_r(g, 1, false, ws) == true
-
-
-        ws.d1.chips .= [1, 0, 0, 0, 0, 1, 0, 1]
-
-        @test has_rank_at_least_r(g, 1, false, ws) == false
+        @test has_rank_at_least_r(g, Divisor([1, 0, 0, 0, 0, 1, 0, 1]), 1) == false
     end
 
     @testset "dhar 1 (trivial cases)" begin
@@ -175,16 +166,16 @@ using Test
         
         # Test case that should NOT be super-stable (does not fully burn)
         divisor1 = Divisor([1, 1, 1, 1])
-        ws = Workspace(4)
-        is_superstable1 = dhar!(g, divisor1, 1, ws)
+        
+        is_superstable1, legals = dhar(g, divisor1, 1)
         @test is_superstable1 == false
-        @test sort(ws.legals) == [2, 3, 4] # Only source vertex 1 burns
+        @test sort(legals) == [2, 3, 4] # Only source vertex 1 burns
         
         # Test case that SHOULD be super-stable (fully burns)
         divisor2 = Divisor([0, 0, 0, 0])
-        is_superstable2 = dhar!(g, divisor2, 1, ws)
+        is_superstable2, legals = dhar(g, divisor2, 1)
         @test is_superstable2 == true
-        @test isempty(ws.legals)
+        @test isempty(legals)
     end
 
     @testset "dhar 2 (house)" begin
@@ -208,11 +199,10 @@ using Test
         g_house = ChipFiringGraph(house_adj_matrix)
 
         divisor = Divisor([0, 0, 2, 0, 1])
-        ws = Workspace(5)
 
-        is_superstable = dhar!(g_house, divisor, 1, ws)
+        is_superstable, legals = dhar(g_house, divisor, 1)
         @test is_superstable == false
-        @test sort(ws.legals) == [3, 5]
+        @test sort(legals) == [3, 5]
     end
 
     @testset "q-reduced (house)" begin
@@ -232,11 +222,15 @@ using Test
         1 0 0 1 1;
         0 1 1 0 1;
         0 0 1 1 0
-    ]
+        ]
         g_house = ChipFiringGraph(house_adj_matrix)
-        ws = Workspace(g_house.num_vertices)
 
         divisor = Divisor([1, 0, -1, -2, 3])
-        @test q_reduced(g_house, divisor, 1, ws).chips == [-1, 0, 0, 2, 0]
+        @test q_reduced(g_house, divisor, 1).chips == [-1, 0, 0, 2, 0]
+    end
+
+    @testset "silly vertex" begin
+        g = ChipFiringGraph(zeros(Int, 1,1))
+        @test compute_gonality(g) == 1
     end
 end

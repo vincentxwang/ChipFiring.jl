@@ -10,7 +10,6 @@ include("algorithms.jl")
 export  # TYPES
         ChipFiringGraph,
         Divisor,
-        Workspace,
 
         # MAIN ALGORITHMS & ANALYSIS
         compute_gonality,
@@ -18,20 +17,15 @@ export  # TYPES
         q_reduced,
         dhar,
         subdivide,
-
-        # PREDICATES (is/has functions)
         is_winnable,
         has_rank_at_least_r,
         
-        # LOW-LEVEL OPERATIONS
+        # LOW-LEVEL OPERATIONS / UTILITIES
         lend!,
         borrow!,
-
-        # GRAPH PROPERTIES & UTILITIES
         laplacian,
         compute_genus,
         neighbors,
         get_num_edges,
         sprint_graph
-
 end # module ChipFiring

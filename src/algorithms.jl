@@ -173,9 +173,9 @@ function dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
 end
 
 """
-    q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace)
+    q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace) -> Divisor
 
-Finds the equivalent, q-reduced effective divisor to the one given. Based off the algorithm in https://github.com/matthew-pisano/ChipFiring/tree/master.
+Finds the equivalent, q-reduced effective divisor to the one given.
 
 # Arguments
 - `g`: The graph structure.
@@ -184,14 +184,15 @@ Finds the equivalent, q-reduced effective divisor to the one given. Based off th
 - `ws`: The workspace containing pre-allocated arrays.
 
 # Returns
-- `d::Vector{Int}`: The resulting divisor
+- `d::Divisor`: The resulting divisor
 """
 function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
 
     d = ws.d2
     d.chips .= divisor.chips
 
-    # Stage 1: Benevolence : can have some performance improvements in two ways 1) debt-reduction trick. 2) keep track of negative nodes
+    # Stage 1: Benevolence : 
+    # can have some performance improvements in two ways 1) debt-reduction trick. 2) keep track of negative nodes
 
     find_negative_vertices!(ws.firing_set, g, d, q)
 
@@ -214,7 +215,7 @@ function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
 end
 
 """
-    q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace)
+    q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace) -> Divisor
 
 Finds the equivalent, q-reduced effective divisor to the one given, based on the algorithm
 from the user-provided Python code.
@@ -230,7 +231,7 @@ code where this function is called repeatedly, use the version that accepts a
 - `ws`: The workspace containing pre-allocated arrays.
 
 # Returns
-- `d::Vector{Int}`: The resulting divisor
+- `d::Divisor`: The resulting divisor
 """
 function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int)
     return q_reduced(g, divisor, q, Workspace(g.num_vertices))
@@ -282,4 +283,114 @@ code where this function is called repeatedly, use the version that accepts a
 """
 function is_winnable(g::ChipFiringGraph, divisor::Divisor)
     is_winnable(g, divisor, Workspace(g.num_vertices))
+end
+
+"""
+    next_composition!(v::Vector{Int}) -> Bool
+
+Mutates the vector `v` into the next composition in-place.
+Assumes the sum of elements should remain constant.
+
+# Returns
+- `true` if a next configuration was generated.
+- `false` if `v` was already the last configuration (e.g., [0, 0, ..., d]).
+"""
+function next_composition!(v::Vector{Int})
+    n = length(v)
+
+    # Find the first non-zero element from the left (the pivot).
+    t = findfirst(!iszero, v)
+
+    # If no non-zero element is found, or if all the value is in the last
+    # element, we are at the final composition.
+    if t === nothing || t == n
+        return false
+    end
+
+    # Take the value from the pivot position.
+    val = v[t]
+    # Reset the pivot position to zero.
+    v[t] = 0
+    # Increment the position to the right of the pivot.
+    v[t+1] += 1
+    # Add the remainder of the pivot's value (minus the one we moved)
+    # to the very first element.
+    v[1] += val - 1
+    
+    return true
+end
+
+"""
+    has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace) -> Bool
+
+Checks if a divisor `ws.d1` has rank at least `r`.
+"""
+function has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace)
+    divisor = ws.d1
+    if r == 1 || cgon
+        for v in 1:g.num_vertices
+            divisor.chips[v] -= r
+            winnable = is_winnable(g, divisor, ws)
+            divisor.chips[v] += r # Always restore state
+            if !winnable
+                return false
+            end
+        end
+    else
+        n = g.num_vertices
+        
+        # 1. Pre-allocate the vector just ONCE.
+        div_chips = zeros(Int, n)
+        div_chips[1] = r # 2. Initialize to the first composition.
+
+        # 3. Loop by mutating `div_chips` in-place.
+
+        keep_going = true
+        while keep_going
+            divisor.chips .-= div_chips
+            winnable = is_winnable(g, divisor, ws)
+            divisor.chips .+= div_chips # Always restore state
+            if !winnable
+                return false
+            end
+            
+            keep_going = next_composition!(div_chips)
+        end
+    end
+    return true
+end
+
+"""
+    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool) -> Bool
+Given a ChipFiringGraph `g` and Divisor `d`, returns a boolean determining whether or not `d` has rank at least
+`r`. 
+
+Set `cgon` to be true if we are interested in concentrated rank. 
+"""
+function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int; cgon=false)
+    ws = Workspace(g.num_vertices)
+    ws.d1.chips .= d.chips
+    return has_rank_at_least_r(g, r, cgon, ws)
+end
+
+"""
+    rank(g::ChipFiringGraph, d::Divisor)
+
+Given a ChipFiringGraph `g` and Divisor `d`, returns the rank (in the sense of Baker and Norine) of `d` on `g`.
+See Divisors and Sandpiles by Corry and Perkinson.
+
+Set `cgon` to be true if we are interested in concentrated rank.
+"""
+function rank(g::ChipFiringGraph, d::Divisor; cgon=false)
+    if !is_winnable(g, d)
+        return -1
+    else
+        rank = 1
+        while true
+            if !has_rank_at_least_r(g, d, rank, cgon)
+                return rank - 1
+            end
+            rank += 1
+        end
+    end
 end
