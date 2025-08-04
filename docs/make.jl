@@ -10,7 +10,7 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
-        "Background and conventions",
+        "Background and conventions" => "bg.md",
         "Reference" => "api.md",
     ],
 )
