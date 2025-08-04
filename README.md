@@ -1,6 +1,6 @@
 # ChipFiring.jl
 
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://vincentxwang.github.io/BernsteinBasis.jl/dev/)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://vincentxwang.github.io/ChipFiring.jl/dev/)
 
 A highly-performant Julia package for calculating graph gonality. This is in development so expect things to change frequently.
 
