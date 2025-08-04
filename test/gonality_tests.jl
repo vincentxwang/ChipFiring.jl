@@ -1,4 +1,4 @@
-# using ChipFiring
+using ChipFiring
 using Test
 
 @testset "gonality tests" begin

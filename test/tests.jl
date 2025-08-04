@@ -1,4 +1,4 @@
-# using ChipFiring
+using ChipFiring
 using Test
 
 @testset "ChipFiring.jl Tests" begin
