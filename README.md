@@ -2,7 +2,17 @@
 
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://vincentxwang.github.io/ChipFiring.jl/dev/)
 
-A highly-performant Julia package for calculating graph gonality. This is in development so expect things to change frequently.
+[This package](https://github.com/vincentxwang/ChipFiring.jl) contains routines to quickly calculate graph gonality of chip-firing graphs. The codes are roughly based on the algorithms given in *Sandpiles and Divisors: An Introduction to Chip-Firing* by Corry and Perkinson (2018).
+
+# Contents
+
+Currently, this package supports the following:
+
+- Basic operations on chip-firing graphs (e.g. firing, lending)
+- Computations of graph gonality
+- Subdivisions of graphs
+- Rank computations
+- q-reduction and Dhar's burning algorithm
 
 # Basic Usage
 
@@ -26,3 +36,7 @@ Divisor([1, 1, 1, 1])
 julia> q_reduced(g, d, 1)
 Divisor([-4, 1, 1, 0])
 ```
+
+# Acknowledgements
+
+This package was developed during the SMALL 2025 REU hosted at Williams College, funded by NSF Grant DMS2241623. Special thanks to Madeline Reeve and Charlotte Chen for contributing code.
