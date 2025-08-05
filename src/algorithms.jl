@@ -321,11 +321,11 @@ function next_composition!(v::Vector{Int})
 end
 
 """
-    has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace) -> Bool
+    has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace; cgon::Bool) -> Bool
 
 Checks if a divisor `ws.d1` has rank at least `r`.
 """
-function has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace)
+function has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace; cgon=false)
     divisor = ws.d1
     if r == 1 || cgon
         for v in 1:g.num_vertices
@@ -361,7 +361,7 @@ function has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspa
 end
 
 """
-    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool) -> Bool
+    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int; cgon::Bool) -> Bool
 Given a ChipFiringGraph `g` and Divisor `d`, returns a boolean determining whether or not `d` has rank at least
 `r`. 
 
@@ -370,24 +370,24 @@ Set `cgon` to be true if we are interested in concentrated rank.
 function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int; cgon=false)
     ws = Workspace(g.num_vertices)
     ws.d1.chips .= d.chips
-    return has_rank_at_least_r(g, r, cgon, ws)
+    return has_rank_at_least_r(g, r, ws; cgon=cgon)
 end
 
 """
-    rank(g::ChipFiringGraph, d::Divisor) -> Int
+    divisor_rank(g::ChipFiringGraph, d::Divisor) -> Int
 
 Given a ChipFiringGraph `g` and Divisor `d`, returns the rank (in the sense of Baker and Norine) of `d` on `g`.
 See Divisors and Sandpiles by Corry and Perkinson.
 
 Set `cgon` to be true if we are interested in concentrated rank.
 """
-function rank(g::ChipFiringGraph, d::Divisor; cgon=false)
+function divisor_rank(g::ChipFiringGraph, d::Divisor; cgon=false)
     if !is_winnable(g, d)
         return -1
     else
         rank = 1
         while true
-            if !has_rank_at_least_r(g, d, rank, cgon)
+            if !has_rank_at_least_r(g, d, rank, cgon=cgon)
                 return rank - 1
             end
             rank += 1

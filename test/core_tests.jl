@@ -84,7 +84,7 @@ using Test
     end
 
 
-    @testset "is_winnable 1 (cube)" begin
+    @testset "is_winnable + rank 1 (cube)" begin
         # cube graph
         #     5-------6
         #     /|      /|
@@ -110,10 +110,12 @@ using Test
         divisor1 = Divisor([0, 0, 0, 0, 0, 0, 0, 0])
 
         @test is_winnable(g, divisor1) == true
+        @test divisor_rank(g, divisor1) == 0
 
         divisor2 = Divisor([0, -1, 0, 0, 0, 0, 0, 0])
 
         @test is_winnable(g, divisor2) == false
+        @test divisor_rank(g, divisor2) == -1
 
         divisor3 = Divisor([1, -1, 0, 0, 0, 0, 0, 0])
 
@@ -232,5 +234,19 @@ using Test
     @testset "silly vertex" begin
         g = ChipFiringGraph(zeros(Int, 1,1))
         @test compute_gonality(g) == 1
+    end
+
+    @testset "get_num_edges" begin
+        adj_matrix = [
+        0 1 1 0 0;
+        1 0 0 1 0;
+        1 0 0 1 3;
+        0 1 1 0 1;
+        0 0 3 1 0
+        ]
+        g = ChipFiringGraph(adj_matrix)
+
+        @test get_num_edges(g, 1,2) == 1
+        @test get_num_edges(g, 3, 5) == 3
     end
 end
