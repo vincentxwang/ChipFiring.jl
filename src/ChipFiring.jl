@@ -1,7 +1,5 @@
 module ChipFiring
 
-using LinearAlgebra
-
 include("types.jl")
 include("core.jl")
 include("utils.jl")

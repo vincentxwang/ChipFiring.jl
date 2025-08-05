@@ -16,6 +16,6 @@ makedocs(;
 )
 
 deploydocs(
-    repo = "github.com/vincentwang/ChipFiring.jl",
+    repo = "github.com/vincentxwang/ChipFiring.jl",
     devbranch = "main"
 )
