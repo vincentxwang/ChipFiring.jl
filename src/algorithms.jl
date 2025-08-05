@@ -38,7 +38,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         # d = 0 case
         if d == 0
             ws.d1.chips .= 0
-            if has_rank_at_least_r(g, r, cgon, ws)
+            if has_rank_at_least_r(g, r, ws, cgon=cgon)
                 if verbose; println("SUCCESS: Found divisor of degree 0 with rank >= $r."); end
                 return 0
             end
@@ -54,7 +54,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         while keep_going
             # The body of the original loop, using `chips_vec`
             ws.d1.chips .= chips_vec
-            if has_rank_at_least_r(g, r, cgon, ws)
+            if has_rank_at_least_r(g, r, ws, cgon=cgon)
                 if verbose; println("SUCCESS: Found divisor of degree $d with rank >= $r. Divisor: $chips_vec"); end
                 return d
             end
