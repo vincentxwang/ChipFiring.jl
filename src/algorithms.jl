@@ -374,7 +374,7 @@ function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int; cgon=false)
 end
 
 """
-    rank(g::ChipFiringGraph, d::Divisor)
+    rank(g::ChipFiringGraph, d::Divisor) -> Int
 
 Given a ChipFiringGraph `g` and Divisor `d`, returns the rank (in the sense of Baker and Norine) of `d` on `g`.
 See Divisors and Sandpiles by Corry and Perkinson.
