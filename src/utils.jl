@@ -4,7 +4,7 @@
 Given a ChipFiringGraph `g`, produces another ChipFiringGraph which is an k-uniform subdivision of `g`.
 
 # Arguments
-- `g::ChipFiringGraph` the original Graph
+- `g::ChipFiringGraph` the original graph
 - `subdivisions::Int` number of uniform subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc.)
 
 # Returns 
