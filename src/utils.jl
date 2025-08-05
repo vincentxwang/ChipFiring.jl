@@ -1,13 +1,14 @@
 """
-    subdivide(g::ChipFiringGraph, subdivisions::Int)
+    subdivide(g::ChipFiringGraph, subdivisions::Int) -> ChipFiringGraph
 
-Given a ChipFiring object G, produces another ChipFiring object which is an n-uniform subdivision of G.
+Given a ChipFiringGraph `g`, produces another ChipFiringGraph which is an k-uniform subdivision of `g`.
 
 # Arguments
 - `g::ChipFiringGraph` the original Graph
-- `subdivisions::Int` number of subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc)
+- `subdivisions::Int` number of uniform subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc.)
 
-# Returns subdivided graph
+# Returns 
+- A k-uniform subdivided graph
 """
 function subdivide(g::ChipFiringGraph, subdivisions::Int)
     # if no subdivisions 
@@ -43,7 +44,7 @@ end
 """
     sprint_graph(g::ChipFiringGraph) -> String
 
-Returns a concise, single-line string representation of a ChipFiringGraph.
+Returns a single-line string representation of a ChipFiringGraph.
 """
 function sprint_graph(g::ChipFiringGraph)
     edge_strs = [string(e) for e in g.edge_list]

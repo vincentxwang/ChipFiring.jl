@@ -106,13 +106,11 @@ struct ChipFiringGraph
         ChipFiringGraph(multiplicity_matrix)
     end
 end
+
 """
     Divisor
 
-A mutable struct representing a chip configuration (or "divisor") on a graph.
-This object is intentionally separate from `ChipFiringGraph` to allow for efficient
-analysis, as the same graph structure can be tested with many different divisors
-without copying the graph itself.
+A struct representing a chip configuration (or "divisor") on a graph.
 
 # Fields
 - `chips::Vector{Int}`: An `n`-element vector where `chips[i]` is the number of
@@ -131,7 +129,13 @@ struct Divisor
     end
 end
 
+"""
+    Workspace
 
+A struct that designates space for memory allocations for optimization. This should never 
+be necessary to be called by front-facing access points, although it is possible that it
+may be useful in some performance-sensitive cases.
+"""
 struct Workspace
     d1::Divisor          # The main temporary divisor
     d2::Divisor

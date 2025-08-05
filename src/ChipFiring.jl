@@ -10,6 +10,7 @@ include("algorithms.jl")
 export  # TYPES
         ChipFiringGraph,
         Divisor,
+        Workspace,
 
         # MAIN ALGORITHMS & ANALYSIS
         compute_gonality,
@@ -28,4 +29,5 @@ export  # TYPES
         neighbors,
         get_num_edges,
         sprint_graph
+        
 end # module ChipFiring
