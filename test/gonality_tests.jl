@@ -193,6 +193,25 @@ using Test
         
         @test compute_gonality(g, max_d=6, verbose=false) == 3
     end
+
+    @testset "verbose=true" begin
+        # 4-cycle graph (C_4)
+        #   1 -- 2
+        #   |    |
+        #   4 -- 3
+        adj_matrix = [
+            0 1 0 1;
+            1 0 1 0;
+            0 1 0 1;
+            1 0 1 0
+        ]
+        g = ChipFiringGraph(adj_matrix)
+        
+        # The gonality of a cycle graph is 2
+        @test compute_gonality(g, max_d=3, verbose=true) == 2
+
+        @test compute_gonality(g, max_d=4, verbose=true, r=2) == 3
+    end
 end
 
 # The following test suite tests graphs with different gonality behaviors under uniform subdivision.
@@ -248,8 +267,49 @@ end
 
         s2 = subdivide(g,2)
         @test compute_gonality(s2, max_d=5, verbose=false) == 4
-    end 
+    end
+
+    @testset "1 and Three+ subdivisions" begin
+        # These do not have savings but is worth testing
+        edge_list = [(1,2), (1,6), (1,6), (1,6), (1,7), (2,3), (2,3), (2,3), (3,4), (3,7), (4,5), (4,5), (4,5), (5,6), (5,7)]
+        g = ChipFiringGraph(7, edge_list)
+
+        @test compute_gonality(subdivide(g,1)) == 5
+        @test compute_gonality(subdivide(g,3)) == 5
+        @test compute_gonality(subdivide(g,4)) == 4
+        @test compute_gonality(subdivide(g,5)) == 5
+    end
 end
+
+@testset "divisor_rank and equivalence" begin
+    @testset "housy" begin
+        # Housy Graph
+        #
+        #      (5)
+        #     /   \
+        #    /     \
+        #  (3)-----(4)
+        #   |       |
+        #   |       |
+        #  (1)=====(2)
+        #
+        house_adj_matrix = [
+        0 2 1 0 0;
+        2 0 0 1 0;
+        1 0 0 1 1;
+        0 1 1 0 1;
+        0 0 1 1 0
+    ]
+        g = ChipFiringGraph(house_adj_matrix)
+        @test divisor_rank(g, Divisor([0,0,6,0,0])) == 3
+        @test divisor_rank(g, Divisor([3,0,5,0,0])) == 5
+        @test divisor_rank(g, Divisor([3,0,5,0,3])) == 8
+        @test is_equivalent(g, Divisor([3,0,5,0,0]), Divisor([0, 5, -1, 0, 4])) == true
+        @test is_equivalent(g, Divisor([3,0,5,0,0]), Divisor([0, 5, -1, 0, 3])) == false
+    end
+end
+
+
 
 # The following test suites atims to test concentrated gonality.
 @testset "concentrated gonality" begin

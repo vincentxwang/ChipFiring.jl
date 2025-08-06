@@ -38,7 +38,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         # d = 0 case
         if d == 0
             ws.d1.chips .= 0
-            if has_rank_at_least_r(g, r, cgon, ws)
+            if has_rank_at_least_r(g, r, ws, cgon=cgon)
                 if verbose; println("SUCCESS: Found divisor of degree 0 with rank >= $r."); end
                 return 0
             end
@@ -54,7 +54,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         while keep_going
             # The body of the original loop, using `chips_vec`
             ws.d1.chips .= chips_vec
-            if has_rank_at_least_r(g, r, cgon, ws)
+            if has_rank_at_least_r(g, r, ws, cgon=cgon)
                 if verbose; println("SUCCESS: Found divisor of degree $d with rank >= $r. Divisor: $chips_vec"); end
                 return d
             end
@@ -206,7 +206,7 @@ function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
 
     # Stage 2: Relief
     isSuperstable = dhar!(g, d, q, ws)
-    while d.chips[q] < 0 && !isSuperstable
+    while !isSuperstable
         lend!(g, d, ws.legals)
         isSuperstable = dhar!(g, d, q, ws)
     end
@@ -321,11 +321,11 @@ function next_composition!(v::Vector{Int})
 end
 
 """
-    has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace) -> Bool
+    has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace; cgon::Bool) -> Bool
 
 Checks if a divisor `ws.d1` has rank at least `r`.
 """
-function has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspace)
+function has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace; cgon=false)
     divisor = ws.d1
     if r == 1 || cgon
         for v in 1:g.num_vertices
@@ -361,7 +361,7 @@ function has_rank_at_least_r(g::ChipFiringGraph, r::Int, cgon::Bool, ws::Workspa
 end
 
 """
-    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int, cgon::Bool) -> Bool
+    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int; cgon::Bool) -> Bool
 Given a ChipFiringGraph `g` and Divisor `d`, returns a boolean determining whether or not `d` has rank at least
 `r`. 
 
@@ -370,27 +370,39 @@ Set `cgon` to be true if we are interested in concentrated rank.
 function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int; cgon=false)
     ws = Workspace(g.num_vertices)
     ws.d1.chips .= d.chips
-    return has_rank_at_least_r(g, r, cgon, ws)
+    return has_rank_at_least_r(g, r, ws; cgon=cgon)
 end
 
 """
-    rank(g::ChipFiringGraph, d::Divisor) -> Int
+    divisor_rank(g::ChipFiringGraph, d::Divisor) -> Int
 
 Given a ChipFiringGraph `g` and Divisor `d`, returns the rank (in the sense of Baker and Norine) of `d` on `g`.
 See Divisors and Sandpiles by Corry and Perkinson.
 
 Set `cgon` to be true if we are interested in concentrated rank.
 """
-function rank(g::ChipFiringGraph, d::Divisor; cgon=false)
+function divisor_rank(g::ChipFiringGraph, d::Divisor; cgon=false)
     if !is_winnable(g, d)
         return -1
     else
         rank = 1
         while true
-            if !has_rank_at_least_r(g, d, rank, cgon)
+            if !has_rank_at_least_r(g, d, rank, cgon=cgon)
                 return rank - 1
             end
             rank += 1
         end
     end
+end
+
+"""
+    is_equivalent(g::ChipFiringGraph, d1::Divisor, d2::Divisor) -> Bool
+
+Tests if two divisors are equivalent under chip-firing.
+"""
+function is_equivalent(g::ChipFiringGraph, d1::Divisor, d2::Divisor)
+    q1_red = q_reduced(g, d1, 1)
+    q2_red = q_reduced(g, d2, 1)
+
+    return q1_red.chips == q2_red.chips
 end

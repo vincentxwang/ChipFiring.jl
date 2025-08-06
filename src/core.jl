@@ -71,8 +71,11 @@ end
 Returns the number of edges (multiplicity) between two vertices `u` and `v`.
 """
 function get_num_edges(g::ChipFiringGraph, u::Int, v::Int)
-    if u < 1 || u > g.num_vertices || v < 1 || v > g.num_vertices
-        error("Vertex index out of bounds (1 to $(g.num_vertices)).")
+    if u < 1 || u > g.num_vertices
+        throw(DomainError(u, "Vertex index out of bounds (1 to $(g.num_vertices))."))
+    end
+    if v < 1 || v > g.num_vertices
+        throw(DomainError(v, "Vertex index out of bounds (1 to $(g.num_vertices))."))
     end
     return g.adj_matrix[u, v]
 end

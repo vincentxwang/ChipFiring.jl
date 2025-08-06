@@ -18,6 +18,8 @@ export  # TYPES
         subdivide,
         is_winnable,
         has_rank_at_least_r,
+        divisor_rank,
+        is_equivalent,
         
         # LOW-LEVEL OPERATIONS / UTILITIES
         lend!,
