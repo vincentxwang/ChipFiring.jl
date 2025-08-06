@@ -40,4 +40,4 @@ Divisor([-4, 1, 1, 0])
 
 # Acknowledgements
 
-This package was developed during the SMALL 2025 REU hosted at Williams College, funded by NSF Grant DMS2241623 and the Williams College Finnerty Fund. Special thanks to Madeline Reeve and Charlotte Chen for contributing code.
+This package was developed during the SMALL 2025 REU hosted at Williams College, funded by NSF Grant DMS2241623 and the Williams College Finnerty Fund. Special thanks to [Charlotte Chen](https://github.com/cjc-11), [Benham Cobb](https://github.com/BenhamCobb), [Noam Pasman](https://github.com/NoamPasman), [Madeline Reeve](maddie2003), for contributing code.
