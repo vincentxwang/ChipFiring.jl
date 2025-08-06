@@ -206,7 +206,7 @@ function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
 
     # Stage 2: Relief
     isSuperstable = dhar!(g, d, q, ws)
-    while d.chips[q] < 0 && !isSuperstable
+    while !isSuperstable
         lend!(g, d, ws.legals)
         isSuperstable = dhar!(g, d, q, ws)
     end
@@ -393,4 +393,16 @@ function divisor_rank(g::ChipFiringGraph, d::Divisor; cgon=false)
             rank += 1
         end
     end
+end
+
+"""
+    is_equivalent(g::ChipFiringGraph, d1::Divisor, d2::Divisor) -> Bool
+
+Tests if two divisors are equivalent under chip-firing.
+"""
+function is_equivalent(g::ChipFiringGraph, d1::Divisor, d2::Divisor)
+    q1_red = q_reduced(g, d1, 1)
+    q2_red = q_reduced(g, d2, 1)
+
+    return q1_red.chips == q2_red.chips
 end

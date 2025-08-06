@@ -281,6 +281,36 @@ end
     end
 end
 
+@testset "divisor_rank and equivalence" begin
+    @testset "housy" begin
+        # Housy Graph
+        #
+        #      (5)
+        #     /   \
+        #    /     \
+        #  (3)-----(4)
+        #   |       |
+        #   |       |
+        #  (1)=====(2)
+        #
+        house_adj_matrix = [
+        0 2 1 0 0;
+        2 0 0 1 0;
+        1 0 0 1 1;
+        0 1 1 0 1;
+        0 0 1 1 0
+    ]
+        g = ChipFiringGraph(house_adj_matrix)
+        @test divisor_rank(g, Divisor([0,0,6,0,0])) == 3
+        @test divisor_rank(g, Divisor([3,0,5,0,0])) == 5
+        @test divisor_rank(g, Divisor([3,0,5,0,3])) == 8
+        @test is_equivalent(g, Divisor([3,0,5,0,0]), Divisor([0, 5, -1, 0, 4])) == true
+        @test is_equivalent(g, Divisor([3,0,5,0,0]), Divisor([0, 5, -1, 0, 3])) == false
+    end
+end
+
+
+
 # The following test suites atims to test concentrated gonality.
 @testset "concentrated gonality" begin
     @testset "K_6 (cgon)" begin
