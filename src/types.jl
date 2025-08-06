@@ -41,10 +41,10 @@ struct ChipFiringGraph
         num_vertices = size(multiplicity_matrix, 1)
 
         if size(multiplicity_matrix, 2) != num_vertices
-            error("Multiplicity matrix must be square.")
+            throw(DimensionMismatch("Multiplicity matrix must be square. Received dimensions $(size(multiplicity_matrix))."))
         end
         if any(multiplicity_matrix .!= multiplicity_matrix')
-            error("Multiplicity matrix is not symmetric. The graph will be treated as directed, but this may cause problems.")
+            throw(ArgumentError("Multiplicity matrix must be symmetric for an undirected graph."))
         end
 
         num_edges = div(sum(multiplicity_matrix), 2)
@@ -86,7 +86,7 @@ struct ChipFiringGraph
             end
             
             if count < num_vertices
-                error("Multiplicity matrix is disconnected.")
+                throw(ArgumentError("The graph is not connected."))
             end
         end
 

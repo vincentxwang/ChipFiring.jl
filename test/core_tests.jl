@@ -1,7 +1,7 @@
 using ChipFiring
 using Test
 
-@testset "ChipFiring.jl Tests" begin
+@testset "ChipFiring.jl core Tests" begin
 
     @testset "basic checks" begin
         #   1 == 2
@@ -248,5 +248,56 @@ using Test
 
         @test get_num_edges(g, 1,2) == 1
         @test get_num_edges(g, 3, 5) == 3
+    end
+end
+
+@testset "ChipFiringGraph bad constructions" begin
+
+    @testset "Non-square matrix" begin
+        non_square_matrix = [
+            0 1 1;
+            1 0 0
+        ]
+        @test_throws DimensionMismatch ChipFiringGraph(non_square_matrix)
+    end
+
+    @testset "Non-symmetric matrix" begin
+        # Here, M[1,2] = 1, but M[2,1] = 0, so it's not symmetric.
+        non_symmetric_matrix = [
+            0 1 0;
+            0 0 1; 
+            0 1 0
+        ]
+        @test_throws ArgumentError ChipFiringGraph(non_symmetric_matrix)
+    end
+
+    @testset "Disconnected graph" begin
+        disconnected_matrix = [
+            0 1 0 0;
+            1 0 0 0;
+            0 0 0 1;
+            0 0 1 0
+        ]
+        @test_throws ArgumentError ChipFiringGraph(disconnected_matrix)
+    end
+
+    @testset "Graph with isolated vertex" begin
+        # Vertex 3 is not connected to anything.
+        isolated_vertex_matrix = [
+            0 1 0;
+            1 0 0;
+            0 0 0  
+        ]
+        @test_throws ArgumentError ChipFiringGraph(isolated_vertex_matrix)
+    end
+    
+    @testset "Valid graph" begin
+        valid_matrix = [
+            0 1 1;
+            1 0 1;
+            1 1 0
+        ]
+        g = ChipFiringGraph(valid_matrix)
+        @test g isa ChipFiringGraph
     end
 end
