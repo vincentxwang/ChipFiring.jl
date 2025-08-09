@@ -86,7 +86,8 @@ end
 """
     show(io::IO, g::ChipFiringGraph)
 
-Provides a concise, single-line string representation of a ChipFiringGraph.
+Provides a concise, single-line string representation of a ChipFiringGraph. To obtain a string output,
+the `string()` function can do so.
 """
 function show(io::IO, g::ChipFiringGraph)
     edge_strs = [string(e) for e in g.edge_list]

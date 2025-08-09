@@ -132,9 +132,13 @@ end
 """
     Workspace
 
-A struct that designates space for memory allocations for optimization. This should never 
-be necessary to be called by front-facing access points, although it is possible that it
-may be useful in some performance-sensitive cases.
+A mutable container for pre-allocated arrays and temporary data structures used in
+performance-critical algorithms.
+
+This struct is exposed for users who need to run many computations in a tight loop and
+want to avoid repeated memory allocations. For single-shot calculations, it is often
+more convenient to use the wrapper functions (e.g., `q_reduced(g, d, q)`) which handle
+workspace creation automatically.
 """
 struct Workspace
     d1::Divisor          # The main temporary divisor
@@ -169,22 +173,22 @@ struct Workspace
         
         new(d1, d2, firing_set, burned, threats, legals)
     end
+end
 
-    """
-    clear!(ws::Workspace)
+"""
+clear!(ws::Workspace)
 
-    Resets all fields in the `Workspace` to their default initial states.
-    """
-    function clear!(ws::Workspace)
-        fill!(ws.d1.chips, 0)
-        fill!(ws.d2.chips, 0)
-        
-        empty!(ws.firing_set)
-        empty!(ws.legals)
-        
-        fill!(ws.burned, false)
-        fill!(ws.threats, 0)
-        
-        return
-    end
+Resets all fields in the `Workspace` to their default initial states.
+"""
+function clear!(ws::Workspace)
+    fill!(ws.d1.chips, 0)
+    fill!(ws.d2.chips, 0)
+    
+    empty!(ws.firing_set)
+    empty!(ws.legals)
+    
+    fill!(ws.burned, false)
+    fill!(ws.threats, 0)
+    
+    return
 end

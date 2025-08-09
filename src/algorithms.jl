@@ -86,10 +86,10 @@ it to already-burnt vertices.
 - `g::ChipFiringGraph`: The graph structure.
 - `divisor::Divisor`: Input divisor.
 - `source::Int`: The vertex (1-indexed) from which to start the burn.
+- `ws::Workspace`: The following fields are read from `ws`: ws.burned, ws.legals, ws.threats
 
 # Returns
 - `is_superstable::Bool`: `true` if the entire graph was burned.
-
 
 # Modifies
 - `ws.burned::Vector{Bool}`: Tracks burned vertices. 
@@ -186,7 +186,7 @@ Finds the equivalent, q-reduced effective divisor to the one given.
 # Returns
 - `d::Divisor`: The resulting divisor
 """
-function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
+function q_reduced!(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
 
     d = ws.d2
     d.chips .= divisor.chips
@@ -234,7 +234,7 @@ code where this function is called repeatedly, use the version that accepts a
 - `d::Divisor`: The resulting divisor
 """
 function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int)
-    return q_reduced(g, divisor, q, Workspace(g.num_vertices))
+    return q_reduced!(g, divisor, q, Workspace(g.num_vertices))
 end
 
 
@@ -261,9 +261,9 @@ end
 Checks if a chip configuration is linearly equivalent to an
 effective divisor using a version of Dhar's burning algorithm.
 """
-function is_winnable(g::ChipFiringGraph, divisor::Divisor, ws::Workspace)
+function is_winnable!(g::ChipFiringGraph, divisor::Divisor, ws::Workspace)
     q = 1 # can really set to anything. 1 arbitrary
-    q_red = q_reduced(g, divisor, q, ws)
+    q_red = q_reduced!(g, divisor, q, ws)
     if q_red.chips[q] >= 0
         return true
     else
@@ -282,14 +282,22 @@ code where this function is called repeatedly, use the version that accepts a
 `Workspace` argument.
 """
 function is_winnable(g::ChipFiringGraph, divisor::Divisor)
-    is_winnable(g, divisor, Workspace(g.num_vertices))
+    is_winnable!(g, divisor, Workspace(g.num_vertices))
 end
 
 """
     next_composition!(v::Vector{Int}) -> Bool
 
-Mutates the vector `v` into the next composition in-place.
-Assumes the sum of elements should remain constant.
+Mutates a vector `v` into the next composition of the integer `sum(v)`,
+generating them in colexicographical order.
+
+# Algorithm
+1. Find the first non-zero element from the left, `v[t]`. This is the "pivot".
+2. If no such element exists (or it's the last one), we are at the end of the sequence.
+3. Move one unit from the pivot to its right neighbor: `v[t+1] += 1`.
+4. Move the remaining value of the pivot (`v[t] - 1`) to the very first position `v[1]`.
+5. Set the pivot's original position `v[t]` to zero.
+Example: `[3, 0, 0]` -> `[2, 1, 0]` -> `[1, 2, 0]` -> `[0, 3, 0]` -> `[2, 0, 1]` ...
 
 # Returns
 - `true` if a next configuration was generated.
@@ -330,7 +338,7 @@ function has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace; cgon=fal
     if r == 1 || cgon
         for v in 1:g.num_vertices
             divisor.chips[v] -= r
-            winnable = is_winnable(g, divisor, ws)
+            winnable = is_winnable!(g, divisor, ws)
             divisor.chips[v] += r # Always restore state
             if !winnable
                 return false
@@ -348,7 +356,7 @@ function has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace; cgon=fal
         keep_going = true
         while keep_going
             divisor.chips .-= div_chips
-            winnable = is_winnable(g, divisor, ws)
+            winnable = is_winnable!(g, divisor, ws)
             divisor.chips .+= div_chips # Always restore state
             if !winnable
                 return false

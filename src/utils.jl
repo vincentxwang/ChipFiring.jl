@@ -8,7 +8,7 @@ Given a ChipFiringGraph `g`, produces another ChipFiringGraph which is an k-unif
 - `subdivisions::Int` number of uniform subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc.)
 
 # Returns 
-- A k-uniform subdivided graph
+- A k-uniform subdivided ChipFiringGraph
 """
 function subdivide(g::ChipFiringGraph, subdivisions::Int)
     # if no subdivisions 
@@ -35,7 +35,7 @@ function subdivide(g::ChipFiringGraph, subdivisions::Int)
         end
         push!(new_edge_list, (new_vertex, v))
         new_vertex += 1
-end
+    end
     # total vertices is now n + (subdivisions-1)*m
     new_G = ChipFiringGraph(N, new_edge_list)
     return new_G

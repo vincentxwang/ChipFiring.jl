@@ -1,4 +1,4 @@
-
+using ChipFiring
 using BenchmarkTools
 
 function profile_test()
