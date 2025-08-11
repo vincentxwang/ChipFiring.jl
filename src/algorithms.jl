@@ -36,7 +36,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         
         # d = 0 case
         if d == 0
-            ws.d1.chips .= 0
+            ws.d1 .= 0
             if has_rank_at_least_r(g, r, ws)
                 if verbose; println("SUCCESS: Found divisor of degree 0 with rank >= $r."); end
                 return 0
@@ -52,7 +52,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         keep_going = true
         while keep_going
             # The body of the original loop, using `chips_vec`
-            ws.d1.chips .= chips_vec
+            ws.d1 .= chips_vec
             if has_rank_at_least_r(g, r, ws)
                 if verbose; println("SUCCESS: Found divisor of degree $d with rank >= $r. Divisor: $chips_vec"); end
                 return d
@@ -119,7 +119,7 @@ function dhar!(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace)
         for v in g.adj_list[u]
             if !burned[v]
                 threats[v] += g.adj_matrix[u, v]
-                if divisor.chips[v] < threats[v]
+                if divisor[v] < threats[v]
                     burned[v] = true
                     push!(worklist, v)
                     num_burned += 1
@@ -188,7 +188,7 @@ Finds the equivalent, q-reduced effective divisor to the one given.
 function q_reduced!(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
 
     d = ws.d2
-    d.chips .= divisor.chips
+    d .= divisor
 
     # Stage 1: Benevolence : 
     # can have some performance improvements in two ways 1) debt-reduction trick. 2) keep track of negative nodes
@@ -248,7 +248,7 @@ function find_negative_vertices!(out_vec::Vector{Int}, g::ChipFiringGraph, d::Di
     empty!(out_vec)
     
     for i in 1:g.num_vertices
-        if i != q && d.chips[i] < 0
+        if i != q && d[i] < 0
             push!(out_vec, i)
         end
     end
@@ -263,7 +263,7 @@ effective divisor using a version of Dhar's burning algorithm.
 function is_winnable!(g::ChipFiringGraph, divisor::Divisor, ws::Workspace)
     q = 1 # can really set to anything. 1 arbitrary
     q_red = q_reduced!(g, divisor, q, ws)
-    if q_red.chips[q] >= 0
+    if q_red[q] >= 0
         return true
     else
         return false
@@ -336,9 +336,9 @@ function has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace)
     divisor = ws.d1
     if r == 1
         for v in 1:g.num_vertices
-            divisor.chips[v] -= r
+            divisor[v] -= r
             winnable = is_winnable!(g, divisor, ws)
-            divisor.chips[v] += r # Always restore state
+            divisor[v] += r # Always restore state
             if !winnable
                 return false
             end
@@ -354,9 +354,9 @@ function has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace)
 
         keep_going = true
         while keep_going
-            divisor.chips .-= div_chips
+            divisor .-= div_chips
             winnable = is_winnable!(g, divisor, ws)
-            divisor.chips .+= div_chips # Always restore state
+            divisor .+= div_chips # Always restore state
             if !winnable
                 return false
             end
@@ -374,7 +374,7 @@ Given a ChipFiringGraph `g` and Divisor `d`, returns a boolean determining wheth
 """
 function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int)
     ws = Workspace(g.num_vertices)
-    ws.d1.chips .= d.chips
+    ws.d1 .= d
     return has_rank_at_least_r(g, r, ws)
 end
 
@@ -407,5 +407,5 @@ function is_equivalent(g::ChipFiringGraph, d1::Divisor, d2::Divisor)
     q1_red = q_reduced(g, d1, 1)
     q2_red = q_reduced(g, d2, 1)
 
-    return q1_red.chips == q2_red.chips
+    return q1_red == q2_red
 end

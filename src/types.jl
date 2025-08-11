@@ -1,3 +1,5 @@
+import Base: getindex, setindex!, length, iterate, eltype, ==, ≤, <, ≥, >, Broadcast
+
 """
     ChipFiringGraph
 
@@ -108,7 +110,7 @@ struct ChipFiringGraph
 end
 
 """
-    Divisor
+    Divisor <: AbstractVector{Int}
 
 A struct representing a chip configuration (or "divisor") on a graph.
 
@@ -116,18 +118,49 @@ A struct representing a chip configuration (or "divisor") on a graph.
 - `chips::Vector{Int}`: An `n`-element vector where `chips[i]` is the number of
   chips on vertex `i`.
 """
-struct Divisor
+struct Divisor <: AbstractVector{Int}
     chips::Vector{Int}
-
-    """
-        Divisor(chips::Vector{Int})
-
-    Constructor for a `Divisor`. Creates a new divisor from a vector of chip counts.
-    """
-    function Divisor(chips::Vector{Int})
-        new(chips)
-    end
 end
+
+
+"""
+    size(d::Divisor)
+
+Returns the size of the divisor (the number of vertices).
+"""
+Base.size(d::Divisor) = size(d.chips)
+
+"""
+    getindex(d::Divisor, i::Int)
+
+Returns the number of chips on vertex `i`. Allows `d[i]` syntax.
+"""
+Base.getindex(d::Divisor, i::Int) = d.chips[i]
+
+"""
+    setindex!(d::Divisor, val, i::Int)
+
+Sets the number of chips on vertex `i`. Allows `d[i] = val` syntax.
+"""
+Base.setindex!(d::Divisor, val, i::Int) = (d.chips[i] = val)
+
+
+# --- You should still keep the custom partial order definitions ---
+
+import Base: ==, ≤, <, ≥, >
+
+Base.:(==)(d1::Divisor, d2::Divisor) = (d1.chips == d2.chips)
+
+function Base.:(≤)(d1::Divisor, d2::Divisor)
+    if length(d1) != length(d2) # We can use length() directly now
+        throw(DimensionMismatch("Divisors must be on the same number of vertices to be compared."))
+    end
+    return all(d1 .<= d2) # Broadcasting on Divisors now works!
+end
+
+Base.:(<)(d1::Divisor, d2::Divisor) = (d1 ≤ d2) && (d1 != d2)
+Base.:(≥)(d1::Divisor, d2::Divisor) = (d2 ≤ d1)
+Base.:(>)(d1::Divisor, d2::Divisor) = (d2 < d1)
 
 """
     Workspace

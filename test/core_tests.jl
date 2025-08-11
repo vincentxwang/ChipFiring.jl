@@ -313,3 +313,68 @@ end
         @test g isa ChipFiringGraph
     end
 end
+
+@testset "divisor struct" begin
+
+    @testset "constructor" begin
+        chips = [1, 4, 2]
+        d = Divisor(chips)
+        @test d.chips == chips
+    end
+
+    @testset "equality" begin
+        d1 = Divisor([1, 2, 3])
+        d2 = Divisor([1, 2, 3])
+        d3 = Divisor([1, 9, 3])
+
+        @test d1 == d2
+        @test d1 != d3
+    end
+
+    @testset "partial order comparisons" begin
+        d1 = Divisor([2, 5, 3])
+        d2 = Divisor([3, 5, 4]) # d1 <= d2 and d1 < d2
+        d3 = Divisor([2, 5, 3]) # d1 == d3
+        d4 = Divisor([3, 1, 6]) # Incomparable to d1
+
+        # Test less than or equal (≤)
+        @test d1 ≤ d2
+        @test d1 ≤ d3
+        @test !(d2 ≤ d1)
+
+        # Test strictly less than (<)
+        @test d1 < d2
+        @test !(d1 < d3) # Not strictly less because they are equal
+
+        # Test greater than or equal (≥)
+        @test d2 ≥ d1
+        @test d3 ≥ d1
+
+        # Test strictly greater than (>)
+        @test d2 > d1
+        @test !(d3 > d1)
+
+        # Test incomparable case
+        @test !(d1 ≤ d4)
+        @test !(d4 ≤ d1)
+        
+        # Test error on different lengths
+        d_short = Divisor([1, 1])
+        @test_throws DimensionMismatch (d1 ≤ d_short)
+    end
+
+    @testset "collection interface" begin
+        d = Divisor([10, 20, 30])
+        
+        @test length(d) == 3
+
+        @test d[2] == 20
+
+        d[2] = 99
+        @test d[2] == 99
+
+        @test sum(d) == 10 + 99 + 30
+        @test [c for c in d] == [10, 99, 30]
+    end
+
+end
