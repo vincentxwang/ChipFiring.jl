@@ -40,13 +40,3 @@ function subdivide(g::ChipFiringGraph, subdivisions::Int)
     new_G = ChipFiringGraph(N, new_edge_list)
     return new_G
 end
-
-"""
-    sprint_graph(g::ChipFiringGraph) -> String
-
-Returns a single-line string representation of a ChipFiringGraph.
-"""
-function sprint_graph(g::ChipFiringGraph)
-    edge_strs = [string(e) for e in g.edge_list]
-    return "Graph(V=$(g.num_vertices), E=$(g.num_edges), Edges=[$(join(edge_strs, ", "))])"
-end
