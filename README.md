@@ -3,11 +3,7 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://vincentxwang.github.io/ChipFiring.jl/dev/)
 [![codecov](https://codecov.io/gh/vincentxwang/ChipFiring.jl/graph/badge.svg?token=TKJBAIMQ6D)](https://codecov.io/gh/vincentxwang/ChipFiring.jl)
 
-[ChipFiring.jl](https://github.com/vincentxwang/ChipFiring.jl) is a Julia package for analyzing chip-firing games on graphs. The package was written with performance-critical uses in mind, and is optimized to minimize memory allocations. The codes are roughly based on the algorithms given in *Sandpiles and Divisors: An Introduction to Chip-Firing* by Corry and Perkinson (2018).
-
-# Contents
-
-Currently, this package supports the following:
+[ChipFiring.jl](https://github.com/vincentxwang/ChipFiring.jl) is a Julia package for analyzing chip-firing games on graphs. The codes are roughly based on the algorithms given in *Sandpiles and Divisors: An Introduction to Chip-Firing* by Corry and Perkinson (2018). A key objective is for the package to be useful for both researchers and students. The package is built around a two-tier API design: a simple layer for interactive use, and a high-performance layer for intensive computations. Its features include:
 
 - Basic operations on chip-firing graphs (e.g. firing, lending)
 - Computations of $r$-th graph gonality

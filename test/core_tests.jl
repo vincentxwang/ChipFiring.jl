@@ -166,17 +166,18 @@ using Test
         ]
         g = ChipFiringGraph(adj_matrix)
         
-        # Test case that should NOT be super-stable (does not fully burn)
+        # test case that should NOT be super-stable (does not fully burn)
         divisor1 = Divisor([1, 1, 1, 1])
         
-        is_superstable1, legals = dhar(g, divisor1, 1)
-        @test is_superstable1 == false
+        is_superstable, legals = dhar(g, divisor1, 1)
+
+        @test is_superstable == false
         @test sort(legals) == [2, 3, 4] # Only source vertex 1 burns
         
         # Test case that SHOULD be super-stable (fully burns)
         divisor2 = Divisor([0, 0, 0, 0])
-        is_superstable2, legals = dhar(g, divisor2, 1)
-        @test is_superstable2 == true
+        is_superstable, legals = dhar(g, divisor2, 1)
+        @test is_superstable == true
         @test isempty(legals)
     end
 
@@ -203,6 +204,7 @@ using Test
         divisor = Divisor([0, 0, 2, 0, 1])
 
         is_superstable, legals = dhar(g_house, divisor, 1)
+
         @test is_superstable == false
         @test sort(legals) == [3, 5]
     end
@@ -231,9 +233,19 @@ using Test
         @test q_reduced(g_house, divisor, 1).chips == [-1, 0, 0, 2, 0]
     end
 
-    @testset "silly vertex" begin
-        g = ChipFiringGraph(zeros(Int, 1,1))
-        @test compute_gonality(g) == 1
+    @testset "silly (trivial graphs)" begin
+        # single-vertex graph (P1)
+        P1 = ChipFiringGraph(1, Tuple{Int, Int}[])
+        @test P1.num_vertices == 1
+        @test P1.num_edges == 0
+        @test P1.degree_list == [0]
+        @test compute_genus(P1) == 0
+        @test compute_gonality(P1) == 1
+
+        # two-vertex path graph (P2)
+        P2 = ChipFiringGraph(2, [(1,2)])
+        @test compute_genus(P2) == 0
+        @test compute_gonality(P2) == 1
     end
 
     @testset "get_num_edges" begin

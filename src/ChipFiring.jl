@@ -15,6 +15,7 @@ export  # TYPES
         q_reduced,
         q_reduced!,
         dhar,
+        dhar!,
         is_winnable,
         is_winnable!,
         has_rank_at_least_r,

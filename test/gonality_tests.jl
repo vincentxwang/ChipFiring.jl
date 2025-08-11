@@ -22,7 +22,6 @@ using Test
         ]
         g = ChipFiringGraph(adj_matrix)
 
-        @test compute_gonality(g, max_d=3, verbose=false, cgon=true, r=2) == 2
         @test compute_gonality(g, max_d=3, verbose=false, r=2) == 3
 
         # test max_d
@@ -306,40 +305,5 @@ end
         @test divisor_rank(g, Divisor([3,0,5,0,3])) == 8
         @test is_equivalent(g, Divisor([3,0,5,0,0]), Divisor([0, 5, -1, 0, 4])) == true
         @test is_equivalent(g, Divisor([3,0,5,0,0]), Divisor([0, 5, -1, 0, 3])) == false
-    end
-end
-
-
-
-# The following test suites atims to test concentrated gonality.
-@testset "concentrated gonality" begin
-    @testset "K_6 (cgon)" begin
-        #  1 -- 2
-        adj_matrix = [
-            0 1 1 1 1 1;
-            1 0 1 1 1 1;
-            1 1 0 1 1 1;
-            1 1 1 0 1 1;
-            1 1 1 1 0 1;
-            1 1 1 1 1 0
-        ]
-        g = ChipFiringGraph(adj_matrix)
-
-        @test compute_gonality(g, r = 6, cgon = true, verbose = false, max_d=10) == 6
-    end
-
-    @testset "K_5 (6-th concentrated gonality)" begin
-  
-        adj_matrix = [
-            0 1 1 1 1;
-            1 0 1 1 1;
-            1 1 0 1 1;
-            1 1 1 0 1;
-            1 1 1 1 0
-        ]
-        g = ChipFiringGraph(adj_matrix)
-
-        @test compute_gonality(g) == 4
-        @test compute_gonality(g, r = 6, cgon = true, verbose = false, max_d=10) == 9
     end
 end

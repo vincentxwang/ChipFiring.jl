@@ -1,5 +1,5 @@
 """
-    compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1, cgon=false) -> Int
+    compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1) -> Int
 
 Computes the `r`-th (default: 1) gonality of a graph `g`.
 
@@ -11,21 +11,20 @@ Computes the `r`-th (default: 1) gonality of a graph `g`.
 - `max_d=nothing`: The maximum degree `d` to check. Defaults to `nothing`.
 - `verbose=false`:  If `true`, prints progress updates.
 - `r=1`: Calculates `r`-th gonality. Defaults to `1`.
-- `cgon=false`: Calculate the concentrated r-th gonality if `true`. 
 
 # Returns
 - `Int`: The computed gonality of the graph. Returns -1 if not found within `max_d`.
 
 The result of compute_gonality may return r * n in the case when max_d is set to r * n - 1.
 """
-function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1, cgon=false)
+function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1)
     n = g.num_vertices
     max_degree_to_check = isnothing(max_d) ? (r * n) - 1 : max_d
     genus = compute_genus(g)
 
     ws = Workspace(n)
 
-    if r >= genus && !cgon && (r + genus <= max_degree_to_check)
+    if r >= genus && (r + genus <= max_degree_to_check)
         return r + genus
     end
 
@@ -38,7 +37,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         # d = 0 case
         if d == 0
             ws.d1.chips .= 0
-            if has_rank_at_least_r(g, r, ws, cgon=cgon)
+            if has_rank_at_least_r(g, r, ws)
                 if verbose; println("SUCCESS: Found divisor of degree 0 with rank >= $r."); end
                 return 0
             end
@@ -54,7 +53,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         while keep_going
             # The body of the original loop, using `chips_vec`
             ws.d1.chips .= chips_vec
-            if has_rank_at_least_r(g, r, ws, cgon=cgon)
+            if has_rank_at_least_r(g, r, ws)
                 if verbose; println("SUCCESS: Found divisor of degree $d with rank >= $r. Divisor: $chips_vec"); end
                 return d
             end
@@ -329,13 +328,13 @@ function next_composition!(v::Vector{Int})
 end
 
 """
-    has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace; cgon::Bool) -> Bool
+    has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace) -> Bool
 
 Checks if a divisor `ws.d1` has rank at least `r`.
 """
-function has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace; cgon=false)
+function has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace)
     divisor = ws.d1
-    if r == 1 || cgon
+    if r == 1
         for v in 1:g.num_vertices
             divisor.chips[v] -= r
             winnable = is_winnable!(g, divisor, ws)
@@ -369,16 +368,14 @@ function has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace; cgon=fal
 end
 
 """
-    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int; cgon::Bool) -> Bool
+    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int) -> Bool
 Given a ChipFiringGraph `g` and Divisor `d`, returns a boolean determining whether or not `d` has rank at least
 `r`. 
-
-Set `cgon` to be true if we are interested in concentrated rank. 
 """
-function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int; cgon=false)
+function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int)
     ws = Workspace(g.num_vertices)
     ws.d1.chips .= d.chips
-    return has_rank_at_least_r(g, r, ws; cgon=cgon)
+    return has_rank_at_least_r(g, r, ws)
 end
 
 """
@@ -386,16 +383,14 @@ end
 
 Given a ChipFiringGraph `g` and Divisor `d`, returns the rank (in the sense of Baker and Norine) of `d` on `g`.
 See Divisors and Sandpiles by Corry and Perkinson.
-
-Set `cgon` to be true if we are interested in concentrated rank.
 """
-function divisor_rank(g::ChipFiringGraph, d::Divisor; cgon=false)
+function divisor_rank(g::ChipFiringGraph, d::Divisor)
     if !is_winnable(g, d)
         return -1
     else
         rank = 1
         while true
-            if !has_rank_at_least_r(g, d, rank, cgon=cgon)
+            if !has_rank_at_least_r(g, d, rank)
                 return rank - 1
             end
             rank += 1
