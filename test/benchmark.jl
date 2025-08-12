@@ -1,5 +1,7 @@
-using ChipFiring
 using BenchmarkTools
+
+include("../src/ChipFiring.jl")
+using .ChipFiring
 
 function profile_test()
     icosahedron_adj_matrix =[
