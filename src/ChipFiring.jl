@@ -21,6 +21,7 @@ export  # TYPES
         has_rank_at_least_r,
         divisor_rank,
         is_equivalent,
+        clear!,
         
         # LOW-LEVEL OPERATIONS / UTILITIES
         lend!,
@@ -29,6 +30,7 @@ export  # TYPES
         compute_genus,
         neighbors,
         get_num_edges,
-        subdivide
+        subdivide,
+        parse_graph6
         
 end # module ChipFiring

@@ -377,4 +377,24 @@ end
         @test [c for c in d] == [10, 99, 30]
     end
 
+    @testset "Workspace clear! function" begin
+        N = 5
+        ws = Workspace(N)
+    
+        ws.d1.chips .= [1, 2, 3, 4, 5]
+        ws.d2.chips .= -1
+        push!(ws.firing_set, 1, 2)
+        push!(ws.legals, 3, 4)
+        fill!(ws.burned, true)
+        ws.threats .= 10
+    
+        clear!(ws)
+    
+        @test all(iszero, ws.d1.chips)
+        @test all(iszero, ws.d2.chips)
+        @test isempty(ws.firing_set)
+        @test isempty(ws.legals)
+        @test !any(ws.burned) 
+        @test all(iszero, ws.threats)
+    end
 end
