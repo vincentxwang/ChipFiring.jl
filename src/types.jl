@@ -1,3 +1,5 @@
+import Base: getindex, setindex!, length, iterate, eltype, ==, ≤, <, ≥, >, Broadcast
+
 """
     ChipFiringGraph
 
@@ -108,7 +110,7 @@ struct ChipFiringGraph
 end
 
 """
-    Divisor
+    Divisor <: AbstractVector{Int}
 
 A struct representing a chip configuration (or "divisor") on a graph.
 
@@ -116,25 +118,57 @@ A struct representing a chip configuration (or "divisor") on a graph.
 - `chips::Vector{Int}`: An `n`-element vector where `chips[i]` is the number of
   chips on vertex `i`.
 """
-struct Divisor
+struct Divisor <: AbstractVector{Int}
     chips::Vector{Int}
-
-    """
-        Divisor(chips::Vector{Int})
-
-    Constructor for a `Divisor`. Creates a new divisor from a vector of chip counts.
-    """
-    function Divisor(chips::Vector{Int})
-        new(chips)
-    end
 end
+
+
+"""
+    size(d::Divisor)
+
+Returns the size of the divisor (the number of vertices).
+"""
+Base.size(d::Divisor) = size(d.chips)
+
+"""
+    getindex(d::Divisor, i::Int)
+
+Returns the number of chips on vertex `i`. Allows `d[i]` syntax.
+"""
+Base.getindex(d::Divisor, i::Int) = d.chips[i]
+
+"""
+    setindex!(d::Divisor, val, i::Int)
+
+Sets the number of chips on vertex `i`. Allows `d[i] = val` syntax.
+"""
+Base.setindex!(d::Divisor, val, i::Int) = (d.chips[i] = val)
+
+# partial ordering + equality operators
+
+Base.:(==)(d1::Divisor, d2::Divisor) = (d1.chips == d2.chips)
+
+function Base.:(≤)(d1::Divisor, d2::Divisor)
+    if length(d1) != length(d2)
+        throw(DimensionMismatch("Divisors must be on the same number of vertices to be compared."))
+    end
+    return all(d1 .<= d2)
+end
+
+Base.:(<)(d1::Divisor, d2::Divisor) = (d1 ≤ d2) && (d1 != d2)
+Base.:(≥)(d1::Divisor, d2::Divisor) = (d2 ≤ d1)
+Base.:(>)(d1::Divisor, d2::Divisor) = (d2 < d1)
 
 """
     Workspace
 
-A struct that designates space for memory allocations for optimization. This should never 
-be necessary to be called by front-facing access points, although it is possible that it
-may be useful in some performance-sensitive cases.
+A mutable container for pre-allocated arrays and temporary data structures used in
+performance-critical algorithms.
+
+This struct is exposed for users who need to run many computations in a tight loop and
+want to avoid repeated memory allocations. For one-off calculations, it is often
+more convenient to use the wrapper functions (e.g., `q_reduced(g, d, q)`) which handle
+workspace creation automatically.
 """
 struct Workspace
     d1::Divisor          # The main temporary divisor
@@ -169,22 +203,22 @@ struct Workspace
         
         new(d1, d2, firing_set, burned, threats, legals)
     end
+end
 
-    """
-    clear!(ws::Workspace)
+"""
+clear!(ws::Workspace)
 
-    Resets all fields in the `Workspace` to their default initial states.
-    """
-    function clear!(ws::Workspace)
-        fill!(ws.d1.chips, 0)
-        fill!(ws.d2.chips, 0)
-        
-        empty!(ws.firing_set)
-        empty!(ws.legals)
-        
-        fill!(ws.burned, false)
-        fill!(ws.threats, 0)
-        
-        return
-    end
+Resets all fields in the `Workspace` to their default initial states.
+"""
+function clear!(ws::Workspace)
+    fill!(ws.d1.chips, 0)
+    fill!(ws.d2.chips, 0)
+    
+    empty!(ws.firing_set)
+    empty!(ws.legals)
+    
+    fill!(ws.burned, false)
+    fill!(ws.threats, 0)
+    
+    return
 end

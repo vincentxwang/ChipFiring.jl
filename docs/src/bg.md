@@ -1,4 +1,4 @@
-# Background
+# Background and conventions
 
 We take a graph to be with multi-edges, connected, and no self-loops.
 

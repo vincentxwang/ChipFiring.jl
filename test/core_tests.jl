@@ -166,17 +166,18 @@ using Test
         ]
         g = ChipFiringGraph(adj_matrix)
         
-        # Test case that should NOT be super-stable (does not fully burn)
+        # test case that should NOT be super-stable (does not fully burn)
         divisor1 = Divisor([1, 1, 1, 1])
         
-        is_superstable1, legals = dhar(g, divisor1, 1)
-        @test is_superstable1 == false
+        is_superstable, legals = dhar(g, divisor1, 1)
+
+        @test is_superstable == false
         @test sort(legals) == [2, 3, 4] # Only source vertex 1 burns
         
         # Test case that SHOULD be super-stable (fully burns)
         divisor2 = Divisor([0, 0, 0, 0])
-        is_superstable2, legals = dhar(g, divisor2, 1)
-        @test is_superstable2 == true
+        is_superstable, legals = dhar(g, divisor2, 1)
+        @test is_superstable == true
         @test isempty(legals)
     end
 
@@ -203,6 +204,7 @@ using Test
         divisor = Divisor([0, 0, 2, 0, 1])
 
         is_superstable, legals = dhar(g_house, divisor, 1)
+
         @test is_superstable == false
         @test sort(legals) == [3, 5]
     end
@@ -231,9 +233,19 @@ using Test
         @test q_reduced(g_house, divisor, 1).chips == [-1, 0, 0, 2, 0]
     end
 
-    @testset "silly vertex" begin
-        g = ChipFiringGraph(zeros(Int, 1,1))
-        @test compute_gonality(g) == 1
+    @testset "silly (trivial graphs)" begin
+        # single-vertex graph (P1)
+        P1 = ChipFiringGraph(1, Tuple{Int, Int}[])
+        @test P1.num_vertices == 1
+        @test P1.num_edges == 0
+        @test P1.degree_list == [0]
+        @test compute_genus(P1) == 0
+        @test compute_gonality(P1) == 1
+
+        # two-vertex path graph (P2)
+        P2 = ChipFiringGraph(2, [(1,2)])
+        @test compute_genus(P2) == 0
+        @test compute_gonality(P2) == 1
     end
 
     @testset "get_num_edges" begin
@@ -299,5 +311,90 @@ end
         ]
         g = ChipFiringGraph(valid_matrix)
         @test g isa ChipFiringGraph
+    end
+end
+
+@testset "divisor struct" begin
+
+    @testset "constructor" begin
+        chips = [1, 4, 2]
+        d = Divisor(chips)
+        @test d.chips == chips
+    end
+
+    @testset "equality" begin
+        d1 = Divisor([1, 2, 3])
+        d2 = Divisor([1, 2, 3])
+        d3 = Divisor([1, 9, 3])
+
+        @test d1 == d2
+        @test d1 != d3
+    end
+
+    @testset "partial order comparisons" begin
+        d1 = Divisor([2, 5, 3])
+        d2 = Divisor([3, 5, 4]) # d1 <= d2 and d1 < d2
+        d3 = Divisor([2, 5, 3]) # d1 == d3
+        d4 = Divisor([3, 1, 6]) # Incomparable to d1
+
+        # Test less than or equal (≤)
+        @test d1 ≤ d2
+        @test d1 ≤ d3
+        @test !(d2 ≤ d1)
+
+        # Test strictly less than (<)
+        @test d1 < d2
+        @test !(d1 < d3) # Not strictly less because they are equal
+
+        # Test greater than or equal (≥)
+        @test d2 ≥ d1
+        @test d3 ≥ d1
+
+        # Test strictly greater than (>)
+        @test d2 > d1
+        @test !(d3 > d1)
+
+        # Test incomparable case
+        @test !(d1 ≤ d4)
+        @test !(d4 ≤ d1)
+        
+        # Test error on different lengths
+        d_short = Divisor([1, 1])
+        @test_throws DimensionMismatch (d1 ≤ d_short)
+    end
+
+    @testset "collection interface" begin
+        d = Divisor([10, 20, 30])
+        
+        @test length(d) == 3
+
+        @test d[2] == 20
+
+        d[2] = 99
+        @test d[2] == 99
+
+        @test sum(d) == 10 + 99 + 30
+        @test [c for c in d] == [10, 99, 30]
+    end
+
+    @testset "Workspace clear! function" begin
+        N = 5
+        ws = Workspace(N)
+    
+        ws.d1.chips .= [1, 2, 3, 4, 5]
+        ws.d2.chips .= -1
+        push!(ws.firing_set, 1, 2)
+        push!(ws.legals, 3, 4)
+        fill!(ws.burned, true)
+        ws.threats .= 10
+    
+        clear!(ws)
+    
+        @test all(iszero, ws.d1.chips)
+        @test all(iszero, ws.d2.chips)
+        @test isempty(ws.firing_set)
+        @test isempty(ws.legals)
+        @test !any(ws.burned) 
+        @test all(iszero, ws.threats)
     end
 end

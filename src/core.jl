@@ -9,11 +9,11 @@ function lend!(g::ChipFiringGraph, d::Divisor, v::Int)
     deg_v = g.degree_list[v]
 
     # subtract chips on v
-    d.chips[v] -= deg_v
+    d[v] -= deg_v
 
     # distribute chips to neighbors
     for j in g.adj_list[v]
-        d.chips[j] += g.adj_matrix[v, j]
+        d[j] += g.adj_matrix[v, j]
     end
 end
 
@@ -37,11 +37,11 @@ function borrow!(g::ChipFiringGraph, d::Divisor, v::Int)
     deg_v = g.degree_list[v]
 
     # add chips on v
-    d.chips[v] += deg_v
+    d[v] += deg_v
 
     # neighbors lose chips
     for j in g.adj_list[v]
-        d.chips[j] -= g.adj_matrix[v, j]
+        d[j] -= g.adj_matrix[v, j]
     end
 end
 
@@ -86,7 +86,8 @@ end
 """
     show(io::IO, g::ChipFiringGraph)
 
-Provides a concise, single-line string representation of a ChipFiringGraph.
+Provides a concise, single-line string representation of a ChipFiringGraph. To obtain a string output,
+the `string()` function can do so.
 """
 function show(io::IO, g::ChipFiringGraph)
     edge_strs = [string(e) for e in g.edge_list]

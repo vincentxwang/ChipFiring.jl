@@ -12,14 +12,16 @@ export  # TYPES
 
         # MAIN ALGORITHMS & ANALYSIS
         compute_gonality,
-        rank,
         q_reduced,
+        q_reduced!,
         dhar,
-        subdivide,
+        dhar!,
         is_winnable,
+        is_winnable!,
         has_rank_at_least_r,
         divisor_rank,
         is_equivalent,
+        clear!,
         
         # LOW-LEVEL OPERATIONS / UTILITIES
         lend!,
@@ -28,6 +30,7 @@ export  # TYPES
         compute_genus,
         neighbors,
         get_num_edges,
-        sprint_graph
+        subdivide,
+        parse_graph6
         
 end # module ChipFiring
