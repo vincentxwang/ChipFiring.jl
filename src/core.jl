@@ -6,7 +6,7 @@ import Base: show
 Lends (fires) a single vertex `v`.
 """
 function lend!(g::ChipFiringGraph, d::Divisor, v::Int)
-    deg_v = g.degree_list[v]
+    deg_v = g.valency_list[v]
 
     # subtract chips on v
     d[v] -= deg_v
@@ -34,7 +34,7 @@ end
 Borrows from a single vertex `v`.
 """
 function borrow!(g::ChipFiringGraph, d::Divisor, v::Int)
-    deg_v = g.degree_list[v]
+    deg_v = g.valency_list[v]
 
     # add chips on v
     d[v] += deg_v
@@ -80,7 +80,7 @@ end
 Returns the discrete Laplacian matrix of `g`.
 """
 function laplacian(g::ChipFiringGraph)
-    return diagm(g.degree_list) - g.adj_matrix
+    return diagm(g.valency_list) - g.adj_matrix
 end
 
 """

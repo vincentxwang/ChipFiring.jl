@@ -16,7 +16,7 @@ using Test
         g = ChipFiringGraph(multiplicity_matrix)
 
 
-        @test g.degree_list == [3,3,2,2]
+        @test g.valency_list == [3,3,2,2]
         @test length(g.edge_list) == 5
         @test g.num_edges == 5
     end
@@ -238,7 +238,7 @@ using Test
         P1 = ChipFiringGraph(1, Tuple{Int, Int}[])
         @test P1.num_vertices == 1
         @test P1.num_edges == 0
-        @test P1.degree_list == [0]
+        @test P1.valency_list == [0]
         @test compute_genus(P1) == 0
         @test compute_gonality(P1) == 1
 

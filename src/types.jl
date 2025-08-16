@@ -19,7 +19,7 @@ multiplicity matrix is expected to be symmetric.
   each neighbor appears only once, regardless of edge multiplicity.
 - `edge_list::Vector{Tuple{Int, Int}}`: A vector of tuples, where each tuple `(i, j)`
   represents an edge. Edges are included with their full multiplicity.
-- `degree_list::Vector{Int}`: A vector where `degree_list[i]` stores the degree of
+- `valency_list::Vector{Int}`: A vector where `valency_list[i]` stores the degree of
   vertex `i`, accounting for edge multiplicity.
 
 # Constructors
@@ -36,7 +36,7 @@ struct ChipFiringGraph
     num_edges::Int
     adj_list::Vector{Vector{Int}}
     edge_list::Vector{Tuple{Int, Int}}
-    degree_list::Vector{Int}
+    valency_list::Vector{Int}
 
     # Constructor that takes in a multiplicity matrix
     function ChipFiringGraph(multiplicity_matrix::Matrix{Int})
