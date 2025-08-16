@@ -4,9 +4,10 @@
 
 - Basic operations on chip-firing graphs (e.g. firing, lending)
 - Computations of $r$-th graph gonality
-- Subdivisions of graphs
+- Uniform subdivisions of graphs
 - Rank computations
 - q-reduction and Dhar's burning algorithm
+- Conversion from graph6 format
 
 # Installation
 
