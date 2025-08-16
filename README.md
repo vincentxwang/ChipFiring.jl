@@ -14,7 +14,7 @@
 
 # Installation
 
-This package is on the official Julia registry and can be installed via `Pkg.add(ChipFiring)`. For more details, see the documentation [here]((https://img.shields.io/badge/docs-dev-blue.svg)](https://vincentxwang.github.io/ChipFiring.jl/dev/)).
+This package is on the official Julia registry and can be installed via `Pkg.add(ChipFiring)`. For more details, see the documentation [here](https://vincentxwang.github.io/ChipFiring.jl/dev/).
 
 # Basic Usage
 
