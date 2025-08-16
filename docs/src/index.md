@@ -6,7 +6,7 @@
 - Computations of $r$-th graph gonality
 - Uniform subdivisions of graphs
 - Rank computations
-- q-reduction and Dhar's burning algorithm
+- q-reduction, Dhar's burning algorithm, and equivalence
 - Conversion from graph6 format
 
 # Installation
