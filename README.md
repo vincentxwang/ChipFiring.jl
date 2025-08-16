@@ -20,6 +20,7 @@ julia> multiplicity_matrix = [
     0 1 0 1;
     1 0 1 0   
 ]
+[output omitted]
 
 julia> g = ChipFiringGraph(multiplicity_matrix)
 Graph(V=4, E=5, Edges=[(1, 2), (1, 2), (1, 4), (2, 3), (3, 4)])
@@ -36,4 +37,4 @@ Divisor([-4, 1, 1, 0])
 
 # Acknowledgements
 
-This package was developed during the SMALL 2025 REU hosted at Williams College, funded by NSF Grant DMS2241623 and the Williams College Finnerty Fund. Special thanks to [Charlotte Chen](https://github.com/cjc-11), [Benham Cobb](https://github.com/BenhamCobb), [Noam Pasman](https://github.com/NoamPasman), [Madeline Reeve](https://github.com/maddie2003), for contributing code and/or feedback.
+This package was developed during the SMALL 2025 REU hosted at Williams College, funded by NSF Grant DMS2241623. Special thanks to [Charlotte Chen](https://github.com/cjc-11), [Benham Cobb](https://github.com/BenhamCobb), [Ralph Morrison](https://sites.williams.edu/10rem/), [Noam Pasman](https://github.com/NoamPasman), [Madeline Reeve](https://github.com/maddie2003), for contributing code and/or feedback.
