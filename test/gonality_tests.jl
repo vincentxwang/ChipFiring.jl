@@ -54,7 +54,7 @@ using Test
         g = ChipFiringGraph(adj_matrix)
         
         # The gonality of a cycle graph is 2
-        @test compute_gonality(g, max_d=3, verbose=false) == 2
+        @test compute_gonality(g, max_d=3, verbose=true) == 2
 
         @test compute_gonality(g, max_d=4, verbose=false, r=2) == 3
 
@@ -63,6 +63,8 @@ using Test
         @test compute_gonality(g, max_d=6, verbose=false, r=4) == 5
 
         @test compute_gonality(g, max_d=7, verbose=false, r=5) == 6
+
+        @test compute_gonality(g, r=0) == 0
     end
 
     @testset "subdivide C_4" begin
