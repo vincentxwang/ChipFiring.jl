@@ -23,6 +23,7 @@ export  # TYPES
         divisor_rank,
         is_equivalent,
         clear!,
+        is_effective,
         
         # LOW-LEVEL OPERATIONS / UTILITIES
         lend!,

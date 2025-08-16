@@ -261,6 +261,25 @@ using Test
         @test get_num_edges(g, 1,2) == 1
         @test get_num_edges(g, 3, 5) == 3
     end
+
+    @testset "check laplacian" begin
+        adj_matrix = [
+            0 1 1 0 0;
+            1 0 0 1 0;
+            1 0 0 1 3;
+            0 1 1 0 1;
+            0 0 3 1 0
+            ]
+        
+        g = ChipFiringGraph(adj_matrix)
+
+        d1 = Divisor([1,2,3,4,5])
+        d2 = Divisor([1,2,3,4,5])
+
+        lend!(g, d1, [1,3,3])
+        d2 .-= laplacian(g) * [1,0,2,0,0]
+        @test d1 == d2
+    end
 end
 
 @testset "ChipFiringGraph bad constructions" begin
@@ -396,5 +415,11 @@ end
         @test isempty(ws.legals)
         @test !any(ws.burned) 
         @test all(iszero, ws.threats)
+    end
+
+    @testset "iseffective" begin
+        @test is_effective(Divisor([0, 5, 1])) == true
+        @test is_effective(Divisor([1, -2, 3])) == false
+        @test is_effective(Divisor([0,0,0,0])) == true
     end
 end

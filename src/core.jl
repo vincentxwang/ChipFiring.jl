@@ -80,7 +80,27 @@ end
 Returns the discrete Laplacian matrix of `g`.
 """
 function laplacian(g::ChipFiringGraph)
-    return diagm(g.valency_list) - g.adj_matrix
+    n = size(g.adj_matrix, 1)
+    L = -copy(g.adj_matrix)
+    for i in 1:n
+        L[i, i] += g.valency_list[i]
+    end
+    return L
+end
+
+"""
+    is_effective(d::Divisor) -> Bool
+
+Checks if a divisor is effective, meaning all its chip counts are non-negative.
+
+# Arguments
+- `d::Divisor`: The divisor to check.
+
+# Returns
+- `Bool`: `true` if `d[v] >= 0` for all vertices `v`, and `false` otherwise.
+"""
+function is_effective(d::Divisor)
+    return all(x -> x >= 0, d)
 end
 
 """
