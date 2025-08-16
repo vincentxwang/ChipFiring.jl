@@ -19,9 +19,11 @@ export  # TYPES
         is_winnable,
         is_winnable!,
         has_rank_at_least_r,
+        has_rank_at_least_r!,
         divisor_rank,
         is_equivalent,
         clear!,
+        is_effective,
         
         # LOW-LEVEL OPERATIONS / UTILITIES
         lend!,

@@ -37,7 +37,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         # d = 0 case
         if d == 0
             ws.d1 .= 0
-            if has_rank_at_least_r(g, r, ws)
+            if has_rank_at_least_r!(g, r, ws)
                 if verbose; println("SUCCESS: Found divisor of degree 0 with rank >= $r."); end
                 return 0
             end
@@ -53,7 +53,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         while keep_going
             # The body of the original loop, using `chips_vec`
             ws.d1 .= chips_vec
-            if has_rank_at_least_r(g, r, ws)
+            if has_rank_at_least_r!(g, r, ws)
                 if verbose; println("SUCCESS: Found divisor of degree $d with rank >= $r. Divisor: $chips_vec"); end
                 return d
             end
@@ -172,7 +172,7 @@ function dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
 end
 
 """
-    q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace) -> Divisor
+    q_reduced!(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace) -> Divisor
 
 Finds the equivalent, q-reduced effective divisor to the one given.
 
@@ -328,11 +328,11 @@ function next_composition!(v::Vector{Int})
 end
 
 """
-    has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace) -> Bool
+    has_rank_at_least_r!(g::ChipFiringGraph, r::Int, ws::Workspace) -> Bool
 
 Checks if a divisor `ws.d1` has rank at least `r`.
 """
-function has_rank_at_least_r(g::ChipFiringGraph, r::Int, ws::Workspace)
+function has_rank_at_least_r!(g::ChipFiringGraph, r::Int, ws::Workspace)
     divisor = ws.d1
     if r == 1
         for v in 1:g.num_vertices
@@ -375,22 +375,24 @@ Given a ChipFiringGraph `g` and Divisor `d`, returns a boolean determining wheth
 function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int)
     ws = Workspace(g.num_vertices)
     ws.d1 .= d
-    return has_rank_at_least_r(g, r, ws)
+    return has_rank_at_least_r!(g, r, ws)
 end
 
 """
     divisor_rank(g::ChipFiringGraph, d::Divisor) -> Int
 
 Given a ChipFiringGraph `g` and Divisor `d`, returns the rank (in the sense of Baker and Norine) of `d` on `g`.
-See Divisors and Sandpiles by Corry and Perkinson.
+See Divisors and Sandpiles by Corry and Perkinson. This is a convenience wrapper.
 """
 function divisor_rank(g::ChipFiringGraph, d::Divisor)
-    if !is_winnable(g, d)
+    ws = Workspace(g.num_vertices)
+    if !is_winnable!(g, d, ws)
         return -1
     else
+        ws.d1 .= d
         rank = 1
         while true
-            if !has_rank_at_least_r(g, d, rank)
+            if !has_rank_at_least_r!(g, rank, ws)
                 return rank - 1
             end
             rank += 1

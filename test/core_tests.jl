@@ -16,7 +16,7 @@ using Test
         g = ChipFiringGraph(multiplicity_matrix)
 
 
-        @test g.degree_list == [3,3,2,2]
+        @test g.valency_list == [3,3,2,2]
         @test length(g.edge_list) == 5
         @test g.num_edges == 5
     end
@@ -238,7 +238,7 @@ using Test
         P1 = ChipFiringGraph(1, Tuple{Int, Int}[])
         @test P1.num_vertices == 1
         @test P1.num_edges == 0
-        @test P1.degree_list == [0]
+        @test P1.valency_list == [0]
         @test compute_genus(P1) == 0
         @test compute_gonality(P1) == 1
 
@@ -260,6 +260,25 @@ using Test
 
         @test get_num_edges(g, 1,2) == 1
         @test get_num_edges(g, 3, 5) == 3
+    end
+
+    @testset "check laplacian" begin
+        adj_matrix = [
+            0 1 1 0 0;
+            1 0 0 1 0;
+            1 0 0 1 3;
+            0 1 1 0 1;
+            0 0 3 1 0
+            ]
+        
+        g = ChipFiringGraph(adj_matrix)
+
+        d1 = Divisor([1,2,3,4,5])
+        d2 = Divisor([1,2,3,4,5])
+
+        lend!(g, d1, [1,3,3])
+        d2 .-= laplacian(g) * [1,0,2,0,0]
+        @test d1 == d2
     end
 end
 
@@ -396,5 +415,11 @@ end
         @test isempty(ws.legals)
         @test !any(ws.burned) 
         @test all(iszero, ws.threats)
+    end
+
+    @testset "iseffective" begin
+        @test is_effective(Divisor([0, 5, 1])) == true
+        @test is_effective(Divisor([1, -2, 3])) == false
+        @test is_effective(Divisor([0,0,0,0])) == true
     end
 end
