@@ -26,4 +26,13 @@ Graph(V=4, E=5, Edges=[(1, 2), (1, 2), (1, 4), (2, 3), (3, 4)])
 julia> g = ChipFiringGraph(4, edge_list)
 ```
 
-A `Divisor` encodes a divisor on a graph. For all practical purposes, it will act like a vector, where the $i$-th index corresponds to the number of chips on vertex $i$.
+A `Divisor` encodes a divisor on a graph. However, it is a distinct object from a `ChipFiringGraph`  and for all practical purposes, it will act like a vector, where the $i$-th index corresponds to the number of chips on vertex $i$.
+
+```julia-repl
+julia> d = Divisor([1, 2, 3, -1])
+4-element Divisor:
+  1
+  2
+  3
+ -1
+```

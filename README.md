@@ -9,8 +9,12 @@
 - Computations of $r$-th graph gonality
 - Uniform subdivisions of graphs
 - Rank computations
-- q-reduction and Dhar's burning algorithm
+- q-reduction, Dhar's burning algorithm, and equivalence
 - Conversion from graph6 format
+
+# Installation
+
+This package is on the official Julia registry and can be installed via `Pkg.add(ChipFiring)`. For more details, see the documentation [here]((https://img.shields.io/badge/docs-dev-blue.svg)](https://vincentxwang.github.io/ChipFiring.jl/dev/)).
 
 # Basic Usage
 
