@@ -17,5 +17,6 @@ makedocs(;
 
 deploydocs(
     repo = "github.com/vincentxwang/ChipFiring.jl",
-    devbranch = "main"
+    devbranch = "main",
+    push_preview = true
 )
