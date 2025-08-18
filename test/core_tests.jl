@@ -332,7 +332,7 @@ end
         @test g isa ChipFiringGraph
     end
 
-    @test "doesnt throw error on print" begin
+    @testset "doesnt throw error on print" begin
         valid_matrix = [
             0 1 1;
             1 0 1;
