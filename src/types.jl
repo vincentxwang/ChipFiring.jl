@@ -110,9 +110,20 @@ struct ChipFiringGraph
 end
 
 """
+    show(io::IO, g::ChipFiringGraph)
+
+Provides a concise, single-line string representation of a ChipFiringGraph. To obtain a string output,
+the `string()` function can do so.
+"""
+function show(io::IO, g::ChipFiringGraph)
+    edge_strs = [string(e) for e in g.edge_list]
+    print(io, "Graph(V=$(g.num_vertices), E=$(g.num_edges), Edges=[$(join(edge_strs, ", "))])")
+end
+
+"""
     Divisor <: AbstractVector{Int}
 
-A struct representing a chip configuration (or "divisor") on a graph.
+A struct representing a divisor (i.e., chip configuration) on a graph.
 
 # Fields
 - `chips::Vector{Int}`: An `n`-element vector where `chips[i]` is the number of
@@ -122,26 +133,10 @@ struct Divisor <: AbstractVector{Int}
     chips::Vector{Int}
 end
 
+# abstract vector implementations
 
-"""
-    size(d::Divisor)
-
-Returns the size of the divisor (the number of vertices).
-"""
 Base.size(d::Divisor) = size(d.chips)
-
-"""
-    getindex(d::Divisor, i::Int)
-
-Returns the number of chips on vertex `i`. Allows `d[i]` syntax.
-"""
 Base.getindex(d::Divisor, i::Int) = d.chips[i]
-
-"""
-    setindex!(d::Divisor, val, i::Int)
-
-Sets the number of chips on vertex `i`. Allows `d[i] = val` syntax.
-"""
 Base.setindex!(d::Divisor, val, i::Int) = (d.chips[i] = val)
 
 # partial ordering + equality operators
@@ -206,9 +201,9 @@ struct Workspace
 end
 
 """
-clear!(ws::Workspace)
+    clear!(ws::Workspace)
 
-Resets all fields in the `Workspace` to their default initial states.
+Resets all fields in the `Workspace` to their empty and default states.
 """
 function clear!(ws::Workspace)
     fill!(ws.d1.chips, 0)
