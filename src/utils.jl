@@ -4,24 +4,24 @@
 Given a ChipFiringGraph ``G```, produces another ChipFiringGraph which is an ``k``-uniform subdivision of ``G``.
 
 # Arguments
-- `g::ChipFiringGraph`: The original graph
+- `G::ChipFiringGraph`: The original graph
 - `k::Int`: Number of uniform subdivisions (e.g., `1` returns original graph, `2` produces ``2``-uniform subdivision)
 
 # Returns 
 - A ``k``-uniform subdivided ChipFiringGraph
 """
-function subdivide(g::ChipFiringGraph, subdivisions::Int)
+function subdivide(G::ChipFiringGraph, k::Int)
     # if no subdivisions 
-    if subdivisions <= 1
-        return g
+    if k <= 1
+        return G
     end
 
-    n = g.num_vertices
-    m = g.num_edges
+    n = G.num_vertices
+    m = G.num_edges
 
-    N = n + (subdivisions-1)*m # new number of edges
+    N = n + (k-1)*m # new number of edges
 
-    edge_list = g.edge_list
+    edge_list = G.edge_list
     new_edge_list = Vector{Tuple{Int, Int}}()
 
     new_vertex = n+1 # label for new vertex
@@ -29,7 +29,7 @@ function subdivide(g::ChipFiringGraph, subdivisions::Int)
        # if more than 2, need to add more nodes and edges
         push!(new_edge_list, (u, new_vertex)) # add vertex from source
         # basically make a chain 
-        for i in 1:(subdivisions-2) # loop won't run if subdivisions = 2, so just add 1 edge
+        for _ in 1:(k-2) # loop won't run if subdivisions = 2, so just add 1 edge
             push!(new_edge_list, (new_vertex, new_vertex+1))
             new_vertex +=1
         end

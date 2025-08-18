@@ -18,7 +18,7 @@ function lend!(G::ChipFiringGraph, D::Divisor, v::Int)
 end
 
 """
-    lend!(G::ChipFiringGraph, d::Divisor, vertices::Vector{Int})
+    lend!(G::ChipFiringGraph, D::Divisor, vertices::Vector{Int})
 
 Lends (fires) from each vertex in the provided vector.
 """
@@ -97,7 +97,7 @@ Checks if a divisor ``D`` is effective, meaning all its chip counts are non-nega
 - `D::Divisor`: The divisor to check.
 
 # Returns
-- `Bool`: `true` if `d[v] >= 0` for all vertices `v`, and `false` otherwise.
+- `Bool`: `true` if ``D[v] \\geq 0`` for all vertices `v`, and `false` otherwise.
 """
 function is_effective(D::Divisor)
     return all(x -> x >= 0, D)
