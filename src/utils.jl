@@ -1,7 +1,7 @@
 """
     subdivide(G::ChipFiringGraph, k::Int) -> ChipFiringGraph
 
-Given a ChipFiringGraph ``G```, produces another ChipFiringGraph which is an ``k``-uniform subdivision of ``G``.
+Given a ChipFiringGraph ``G``, produces another ChipFiringGraph which is an ``k``-uniform subdivision of ``G``.
 
 # Arguments
 - `G::ChipFiringGraph`: The original graph

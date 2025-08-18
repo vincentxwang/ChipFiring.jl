@@ -1,7 +1,7 @@
 """
     compute_gonality(G::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1) -> Int
 
-Computes the `r`-th (default: `1`) gonality of a graph ``G```.
+Computes the `r`-th (default: `1`) gonality of a graph ``G``.
 
 # Arguments
 - `G::ChipFiringGraph`: The graph to analyze.
@@ -15,7 +15,7 @@ Computes the `r`-th (default: `1`) gonality of a graph ``G```.
 # Returns
 - `Int`: The computed gonality of the graph. Returns ``-1`` if not found within `max_d`.
 
-Note: The result of `compute_gonality`` may return ``r \\cdot n`` in the case when `max_d`` is set to ``r \\cdot n - 1``.
+Note: The result of `compute_gonality`` may return ``r \\cdot n`` in the case when `max_d` is set to ``r \\cdot n - 1``.
 """
 function compute_gonality(G::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1)
     n = G.num_vertices
@@ -327,9 +327,9 @@ end
 Checks if a divisor `ws.d1` has rank at least ``r``.
 
 # Arguments
-    - `G::ChipFiringGraph`: The graph structure.
-    - `r::Int`: The minimum rank to check for.
-    - `ws::Workspace`: Workspace containing the divisor in `ws.d1`.
+- `G::ChipFiringGraph`: The graph structure.
+- `r::Int`: The minimum rank to check for.
+- `ws::Workspace`: Workspace containing the divisor in `ws.d1`.
 """
 function has_rank_at_least_r!(G::ChipFiringGraph, r::Int, ws::Workspace)
     divisor = ws.d1
@@ -369,13 +369,12 @@ end
 """
     has_rank_at_least_r(G::ChipFiringGraph, D::Divisor, r::Int) -> Bool
 
-Given a ChipFiringGraph ``G`` and Divisor ``D``, returns a boolean determining whether or not ``D`` has rank at least
-``r``. 
+Checks if a divisor ``D`` has rank at least ``r``.
 
 # Arguments
-    - `G::ChipFiringGraph`: The graph to analyze.
-    - `D::Divisor`: The divisor to check.
-    - `r::Int`: The minimum rank to check for.
+- `G::ChipFiringGraph`: The graph to analyze.
+- `D::Divisor`: The divisor to check.
+- `r::Int`: The minimum rank to check for.
 """
 function has_rank_at_least_r(G::ChipFiringGraph, D::Divisor, r::Int)
     ws = Workspace(G.num_vertices)
@@ -415,9 +414,9 @@ end
 Tests if two divisors are equivalent under chip-firing.
 
 # Arguments
-    - `G::ChipFiringGraph`: The graph to analyze.
-    - `D1::Divisor`: The first divisor.
-    - `D2::Divisor`: The second divisor.
+- `G::ChipFiringGraph`: The graph to analyze.
+- `D1::Divisor`: The first divisor.
+- `D2::Divisor`: The second divisor.
 """
 function is_equivalent(G::ChipFiringGraph, D1::Divisor, D2::Divisor)
     q1_red = q_reduced(G, D1, 1)

@@ -59,7 +59,7 @@ end
 """
     neighbors(G::ChipFiringGraph, v::Int) -> Vector{Int}
 
-Returns a vector containing the indices of the neighbors of vertex `v`.
+Returns a vector containing the indices of the neighbors of vertex ``v``.
 """
 function neighbors(G::ChipFiringGraph, v::Int)
     return G.adj_list[v]
@@ -68,7 +68,7 @@ end
 """
     get_num_edges(G::ChipFiringGraph, u::Int, v::Int) -> Int
 
-Returns the number of edges (multiplicity) between two vertices `u` and `v`.
+Returns the number of edges (multiplicity) between two vertices ``u`` and ``v``.
 """
 function get_num_edges(G::ChipFiringGraph, u::Int, v::Int)
     return G.adj_matrix[u, v]
@@ -97,7 +97,7 @@ Checks if a divisor ``D`` is effective, meaning all its chip counts are non-nega
 - `D::Divisor`: The divisor to check.
 
 # Returns
-- `Bool`: `true` if ``D[v] \\geq 0`` for all vertices `v`, and `false` otherwise.
+- `Bool`: `true` if ``D(v) \\geq 0`` for all vertices ``v``, and `false` otherwise.
 """
 function is_effective(D::Divisor)
     return all(x -> x >= 0, D)
