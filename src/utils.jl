@@ -1,14 +1,14 @@
 """
-    subdivide(g::ChipFiringGraph, subdivisions::Int) -> ChipFiringGraph
+    subdivide(G::ChipFiringGraph, k::Int) -> ChipFiringGraph
 
-Given a ChipFiringGraph `g`, produces another ChipFiringGraph which is an k-uniform subdivision of `g`.
+Given a ChipFiringGraph ``G```, produces another ChipFiringGraph which is an ``k``-uniform subdivision of ``G``.
 
 # Arguments
-- `g::ChipFiringGraph` the original graph
-- `subdivisions::Int` number of uniform subdivisions (1 returns original graph, 2 produces 2-uniform subdivision, etc.)
+- `g::ChipFiringGraph`: The original graph
+- `k::Int`: Number of uniform subdivisions (e.g., `1` returns original graph, `2` produces ``2``-uniform subdivision)
 
 # Returns 
-- A k-uniform subdivided ChipFiringGraph
+- A ``k``-uniform subdivided ChipFiringGraph
 """
 function subdivide(g::ChipFiringGraph, subdivisions::Int)
     # if no subdivisions 

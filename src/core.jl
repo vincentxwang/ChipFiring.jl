@@ -1,7 +1,7 @@
 import Base: show
 
 """
-    lend!(G::ChipFiringGraph, d::Divisor, v::Int)
+    lend!(G::ChipFiringGraph, D::Divisor, v::Int)
 
 Lends (fires) a single vertex ``v``.
 """
@@ -57,7 +57,7 @@ function borrow!(G::ChipFiringGraph, D::Divisor, vertices::Vector{Int})
 end
 
 """
-    neighbors(g::ChipFiringGraph, v::Int) -> Vector{Int}
+    neighbors(G::ChipFiringGraph, v::Int) -> Vector{Int}
 
 Returns a vector containing the indices of the neighbors of vertex `v`.
 """
@@ -66,7 +66,7 @@ function neighbors(G::ChipFiringGraph, v::Int)
 end
 
 """
-    get_num_edges(g::ChipFiringGraph, u::Int, v::Int) -> Int
+    get_num_edges(G::ChipFiringGraph, u::Int, v::Int) -> Int
 
 Returns the number of edges (multiplicity) between two vertices `u` and `v`.
 """
@@ -89,18 +89,18 @@ function laplacian(G::ChipFiringGraph)
 end
 
 """
-    is_effective(d::Divisor) -> Bool
+    is_effective(D::Divisor) -> Bool
 
-Checks if a divisor is effective, meaning all its chip counts are non-negative.
+Checks if a divisor ``D`` is effective, meaning all its chip counts are non-negative.
 
 # Arguments
-- `d::Divisor`: The divisor to check.
+- `D::Divisor`: The divisor to check.
 
 # Returns
 - `Bool`: `true` if `d[v] >= 0` for all vertices `v`, and `false` otherwise.
 """
-function is_effective(d::Divisor)
-    return all(x -> x >= 0, d)
+function is_effective(D::Divisor)
+    return all(x -> x >= 0, D)
 end
 
 
@@ -114,6 +114,6 @@ g = |E| - |V| + 1
 ```
 Note this definition is from divisor theory and differs from typical definitions of genus on a graph.
 """
-function compute_genus(g::ChipFiringGraph)
-    return g.num_edges - g.num_vertices + 1
+function compute_genus(G::ChipFiringGraph)
+    return G.num_edges - G.num_vertices + 1
 end
