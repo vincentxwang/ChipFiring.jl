@@ -10,6 +10,7 @@ using Test
         ]
         g = ChipFiringGraph(adj_matrix)
 
+        @test compute_gonality(g, r=0) == 0
         @test compute_gonality(g, max_d=3, verbose=false) == 1
         @test compute_gonality(g, max_d=3, verbose=false, r=2) == 2
     end

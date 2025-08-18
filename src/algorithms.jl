@@ -322,7 +322,7 @@ function next_composition!(v::Vector{Int})
 end
 
 """
-    has_rank_at_least_r!(g::ChipFiringGraph, r::Int, ws::Workspace) -> Bool
+    has_rank_at_least_r!(G::ChipFiringGraph, r::Int, ws::Workspace) -> Bool
 
 Checks if a divisor `ws.d1` has rank at least ``r``.
 
