@@ -331,6 +331,16 @@ end
         g = ChipFiringGraph(valid_matrix)
         @test g isa ChipFiringGraph
     end
+
+    @testset "doesnt throw error on print" begin
+        valid_matrix = [
+            0 1 1;
+            1 0 1;
+            1 1 0
+        ]
+        g = ChipFiringGraph(valid_matrix)
+        string(g)
+    end
 end
 
 @testset "divisor struct" begin

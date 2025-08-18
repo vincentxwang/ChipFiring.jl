@@ -3,19 +3,16 @@ import Base: getindex, setindex!, length, iterate, eltype, ==, ≤, <, ≥, >, B
 """
     ChipFiringGraph
 
-A structure to represent the underlying graph of a chip-firing graph.
-
-This struct provides multiple representations of the graph's structure to suit different
-computational needs. It is designed for undirected, connected graphs, and the input
-multiplicity matrix is expected to be symmetric.
+A structure to represent the underlying (multi)graph of a chip-firing graph. A graph is assumed to 
+be undirected, connected, and with no self-loops.
 
 # Fields
 - `adj_matrix::Matrix{Int}`: The `n x n` multiplicity matrix, where `adj_matrix[i, j]` is
   the number of edges between vertex `i` and vertex `j`.
-- `num_vertices::Int`: The number of vertices in the graph, `n`.
+- `num_vertices::Int`: The number of vertices in the graph.
 - `num_edges::Int`: The total number of edges in the graph.
 - `adj_list::Vector{Vector{Int}}`: An adjacency list where `adj_list[i]` contains the
-  neighbors of vertex `i`. This represents the underlying simple graph, meaning
+  neighbors of vertex `i`. This represents the underlying *simple* graph, meaning
   each neighbor appears only once, regardless of edge multiplicity.
 - `edge_list::Vector{Tuple{Int, Int}}`: A vector of tuples, where each tuple `(i, j)`
   represents an edge. Edges are included with their full multiplicity.
@@ -112,8 +109,7 @@ end
 """
     show(io::IO, g::ChipFiringGraph)
 
-Provides a concise, single-line string representation of a ChipFiringGraph. To obtain a string output,
-the `string()` function can do so.
+Defines the text representation of a `ChipFiringGraph`.
 """
 function show(io::IO, g::ChipFiringGraph)
     edge_strs = [string(e) for e in g.edge_list]

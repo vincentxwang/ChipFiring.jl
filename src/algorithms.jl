@@ -1,26 +1,26 @@
 """
-    compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1) -> Int
+    compute_gonality(G::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1) -> Int
 
-Computes the `r`-th (default: 1) gonality of a graph `g`.
+Computes the `r`-th (default: `1`) gonality of a graph ``G```.
 
 # Arguments
-- `g::ChipFiringGraph`: The graph to analyze.
+- `G::ChipFiringGraph`: The graph to analyze.
 
 # Optional Arguments
-- `min_d=1`: The minimum degree `d` to check.
-- `max_d=nothing`: The maximum degree `d` to check. Defaults to `nothing`.
+- `min_d=1`: The minimum degree to check.
+- `max_d=nothing`: The maximum degree to check. Defaults to `nothing`.
 - `verbose=false`:  If `true`, prints progress updates.
-- `r=1`: Calculates `r`-th gonality. Defaults to `1`.
+- `r=1`: Calculates ``r``-th gonality. Defaults to ``1``.
 
 # Returns
-- `Int`: The computed gonality of the graph. Returns -1 if not found within `max_d`.
+- `Int`: The computed gonality of the graph. Returns ``-1`` if not found within `max_d`.
 
-The result of compute_gonality may return r * n in the case when max_d is set to r * n - 1.
+Note: The result of `compute_gonality`` may return ``r \\cdot n`` in the case when `max_d`` is set to ``r \\cdot n - 1``.
 """
-function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1)
-    n = g.num_vertices
+function compute_gonality(G::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1)
+    n = G.num_vertices
     max_degree_to_check = isnothing(max_d) ? (r * n) - 1 : max_d
-    genus = compute_genus(g)
+    genus = compute_genus(G)
 
     ws = Workspace(n)
 
@@ -37,7 +37,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         # d = 0 case
         if d == 0
             ws.d1 .= 0
-            if has_rank_at_least_r!(g, r, ws)
+            if has_rank_at_least_r!(G, r, ws)
                 if verbose; println("SUCCESS: Found divisor of degree 0 with rank >= $r."); end
                 return 0
             end
@@ -53,7 +53,7 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
         while keep_going
             # The body of the original loop, using `chips_vec`
             ws.d1 .= chips_vec
-            if has_rank_at_least_r!(g, r, ws)
+            if has_rank_at_least_r!(G, r, ws)
                 if verbose; println("SUCCESS: Found divisor of degree $d with rank >= $r. Divisor: $chips_vec"); end
                 return d
             end
@@ -72,30 +72,27 @@ function compute_gonality(g::ChipFiringGraph; min_d=1, max_d=nothing, verbose=fa
 end
 
 """
-    dhar!(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace) -> Bool
+    dhar!(G::ChipFiringGraph, D::Divisor, q::Int, ws::Workspace) -> Bool
 
-Performs a recursive burn starting from a `source` vertex to determine if a `divisor`
-is super-stable with respect to that source.
-
-Following the user's definition, a divisor is super-stable if the entire graph burns.
-A vertex `v` "burns" if its number of chips is less than the number of edges connecting
-it to already-burnt vertices.
+Performs a burn starting from a source vertex ``q`` to determine if the divisor ``D``
+is super-stable with respect to ``q``.
 
 # Arguments
-- `g::ChipFiringGraph`: The graph structure.
-- `divisor::Divisor`: Input divisor.
-- `source::Int`: The vertex (1-indexed) from which to start the burn.
-- `ws::Workspace`: The following fields are read from `ws`: ws.burned, ws.legals, ws.threats
+- `G::ChipFiringGraph`: The graph structure.
+- `D::Divisor`: Input divisor.
+- `q::Int`: The vertex (1-indexed) from which to start the burn.
+- `ws::Workspace`: The following fields are read from `ws`: `ws.burned`, `ws.legals`, `ws.threats`
 
 # Returns
 - `is_superstable::Bool`: `true` if the entire graph was burned.
 
 # Modifies
-- `ws.burned::Vector{Bool}`: Tracks burned vertices. 
-- `ws.legals::Vector{Int}`: The indices of unburned vertices that form a legal firing.
+- `ws.burned`: Tracks burned vertices.
+- `ws.legals`: The indices of unburned vertices that form a legal firing.
+- `ws.threats`: Tracks threats to unburned vertices.
 """
-function dhar!(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace)
-    n = g.num_vertices
+function dhar!(G::ChipFiringGraph, D::Divisor, q::Int, ws::Workspace)
+    n = G.num_vertices
     
     # Reuse the workspace arrays instead of allocating new ones.
     burned = ws.burned
@@ -107,19 +104,19 @@ function dhar!(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace)
     fill!(threats, 0)
     empty!(worklist)
 
-    burned[source] = true
+    burned[q] = true
     num_burned = 1
     
-    push!(worklist, source)
+    push!(worklist, q)
     head = 1
 
     while head <= length(worklist)
         u = worklist[head]
         head += 1
-        for v in g.adj_list[u]
+        for v in G.adj_list[u]
             if !burned[v]
-                threats[v] += g.adj_matrix[u, v]
-                if divisor[v] < threats[v]
+                threats[v] += G.adj_matrix[u, v]
+                if D[v] < threats[v]
                     burned[v] = true
                     push!(worklist, v)
                     num_burned += 1
@@ -145,124 +142,121 @@ function dhar!(g::ChipFiringGraph, divisor::Divisor, source::Int, ws::Workspace)
 end
 
 """
-    dhar(g::ChipFiringGraph, divisor::Divisor, source::Int) -> Tuple{Bool, Vector{Int}}
+    dhar(G::ChipFiringGraph, D::Divisor, q::Int) -> Tuple{Bool, Vector{Int}}
 
-Performs a burn starting from a `source` vertex to determine if a `divisor`
-is super-stable.
-
-This is a convenience wrapper that allocates a temporary workspace. For performance-critical
-code where this function is called repeatedly, use the version that accepts a 
-`Workspace` argument.
+Performs a burn starting from a source vertex ``q`` to determine if the divisor ``D``
+is super-stable with respect to ``q``.
 
 # Arguments
-- `g::ChipFiringGraph`: The graph structure.
-- `divisor::Divisor`: The chip configuration to test.
-- `source::Int`: The vertex (1-indexed) from which to start the burn.
+- `G::ChipFiringGraph`: The graph structure.
+- `D::Divisor`: The chip configuration to test.
+- `q::Int`: The vertex (1-indexed) from which to start the burn.
 
 # Returns
 - The first element is `true` if the divisor is super-stable, `false` otherwise.
 - The second element is a vector of unburned vertices. This vector is empty if the divisor is super-stable.
 """
-function dhar(g::ChipFiringGraph, divisor::Divisor, source::Int)
-    ws = Workspace(g.num_vertices)
+function dhar(G::ChipFiringGraph, D::Divisor, q::Int)
+    ws = Workspace(G.num_vertices)
 
-    is_superstable = dhar!(g, divisor, source, ws)
+    is_superstable = dhar!(G, D, q, ws)
 
     return is_superstable, copy(ws.legals)
 end
 
 """
-    q_reduced!(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace) -> Divisor
+    q_reduced!(G::ChipFiringGraph, D::Divisor, q::Int, ws::Workspace) -> Divisor
 
-Finds the equivalent, q-reduced effective divisor to the one given.
+Finds the equivalent ``q``-reduced effective divisor to ``D``.
 
 # Arguments
-- `g`: The graph structure.
-- `divisor`: The initial chip configuration.
-- `q`: The sink vertex.
-- `ws`: The workspace containing pre-allocated arrays.
+- `G::ChipFiringGraph`: The graph structure.
+- `D::Divisor`: The initial chip configuration.
+- `q::Int`: The sink vertex.
+- `ws::Workspace`: The workspace containing pre-allocated arrays.
 
 # Returns
 - `d::Divisor`: The resulting divisor
+
+# Modifies
+- `ws.d2`: Uses this space to construct the resulting divisor
 """
-function q_reduced!(g::ChipFiringGraph, divisor::Divisor, q::Int, ws::Workspace)
+function q_reduced!(G::ChipFiringGraph, D::Divisor, q::Int, ws::Workspace)
 
     d = ws.d2
-    d .= divisor
+    d .= D
 
     # Stage 1: Benevolence : 
     # can have some performance improvements in two ways 1) debt-reduction trick. 2) keep track of negative nodes
 
-    find_negative_vertices!(ws.firing_set, g, d, q)
+    find_negative_vertices!(ws.firing_set, G, d, q)
 
     while !isempty(ws.firing_set)
         # fires all non-sink stable vertices
-        borrow!(g, d, ws.firing_set)
+        borrow!(G, d, ws.firing_set)
         
         # modifies ws.firing_set in-place
-        find_negative_vertices!(ws.firing_set, g, d, q)
+        find_negative_vertices!(ws.firing_set, G, d, q)
     end
 
     # Stage 2: Relief
-    isSuperstable = dhar!(g, d, q, ws)
+    isSuperstable = dhar!(G, d, q, ws)
     while !isSuperstable
-        lend!(g, d, ws.legals)
-        isSuperstable = dhar!(g, d, q, ws)
+        lend!(G, d, ws.legals)
+        isSuperstable = dhar!(G, d, q, ws)
     end
 
     return d
 end
 
 """
-    q_reduced(g::ChipFiringGraph, divisor::Divisor; q::Int, ws::Workspace) -> Divisor
+    q_reduced(G::ChipFiringGraph, D::Divisor, q::Int) -> Divisor
 
-Finds the equivalent, q-reduced effective divisor to the one given, based on the algorithm
-from the user-provided Python code.
+Finds the equivalent ``q``-reduced effective divisor to ``D``.
 
 This is a convenience wrapper that allocates a temporary workspace. For performance-critical
 code where this function is called repeatedly, use the version that accepts a 
 `Workspace` argument.
 
 # Arguments
-- `g`: The graph structure.
-- `divisor`: The initial chip configuration.
-- `q`: The sink vertex.
-- `ws`: The workspace containing pre-allocated arrays.
+- `G::ChipFiringGraph`: The graph structure.
+- `D::Divisor`: The initial chip configuration.
+- `q::Int`: The sink vertex.
 
 # Returns
 - `d::Divisor`: The resulting divisor
 """
-function q_reduced(g::ChipFiringGraph, divisor::Divisor, q::Int)
-    return q_reduced!(g, divisor, q, Workspace(g.num_vertices))
+function q_reduced(G::ChipFiringGraph, D::Divisor, q::Int)
+    return q_reduced!(G, D, q, Workspace(G.num_vertices))
 end
 
 
 """
-    find_negative_vertices!(out_vec::Vector{Int}, g::ChipFiringGraph, d::Divisor, q::Int)
+    find_negative_vertices!(out_vec::Vector{Int}, G::ChipFiringGraph, D::Divisor, q::Int)
 
-Finds all vertices with negative chips (excluding the sink `q`) and pushes them
+Finds all vertices with negative chips (excluding the sink ``q``) and pushes them
 into the pre-allocated `out_vec`. This is a non-allocating operation.
 """
-function find_negative_vertices!(out_vec::Vector{Int}, g::ChipFiringGraph, d::Divisor, q::Int)
+function find_negative_vertices!(out_vec::Vector{Int}, G::ChipFiringGraph, D::Divisor, q::Int)
 
     empty!(out_vec)
     
-    for i in 1:g.num_vertices
-        if i != q && d[i] < 0
+    for i in 1:G.num_vertices
+        if i != q && D[i] < 0
             push!(out_vec, i)
         end
     end
 end
 
 """
-    is_winnable(g::ChipFiringGraph, divisor::Divisor, ws::Workspace) -> Bool
+    is_winnable!(G::ChipFiringGraph, D::Divisor, ws::Workspace) -> Bool
 
-Checks if a chip configuration is linearly equivalent to an
+Checks if a divisor ``D`` is linearly equivalent to an
 effective divisor using a version of Dhar's burning algorithm.
 """
-function is_winnable!(g::ChipFiringGraph, divisor::Divisor, ws::Workspace)
+function is_winnable!(G::ChipFiringGraph, D::Divisor, ws::Workspace)
     q = 1 # can really set to anything. 1 arbitrary
-    q_red = q_reduced!(g, divisor, q, ws)
+    q_red = q_reduced!(G, D, q, ws)
     if q_red[q] >= 0
         return true
     else
@@ -271,17 +265,17 @@ function is_winnable!(g::ChipFiringGraph, divisor::Divisor, ws::Workspace)
 end
 
 """
-    is_winnable(g::ChipFiringGraph, divisor::Divisor) -> Bool
+    is_winnable(G::ChipFiringGraph, D::Divisor) -> Bool
 
-Checks if a chip configuration is linearly equivalent to an
+Checks if a divisor ``D`` is linearly equivalent to an
 effective divisor using a version of Dhar's burning algorithm.
 
 This is a convenience wrapper that allocates a temporary workspace. For performance-critical
 code where this function is called repeatedly, use the version that accepts a 
 `Workspace` argument.
 """
-function is_winnable(g::ChipFiringGraph, divisor::Divisor)
-    is_winnable!(g, divisor, Workspace(g.num_vertices))
+function is_winnable(G::ChipFiringGraph, D::Divisor)
+    is_winnable!(G, D, Workspace(G.num_vertices))
 end
 
 """
@@ -328,23 +322,28 @@ function next_composition!(v::Vector{Int})
 end
 
 """
-    has_rank_at_least_r!(g::ChipFiringGraph, r::Int, ws::Workspace) -> Bool
+    has_rank_at_least_r!(G::ChipFiringGraph, r::Int, ws::Workspace) -> Bool
 
-Checks if a divisor `ws.d1` has rank at least `r`.
+Checks if a divisor `ws.d1` has rank at least ``r``.
+
+# Arguments
+    - `G::ChipFiringGraph`: The graph structure.
+    - `r::Int`: The minimum rank to check for.
+    - `ws::Workspace`: Workspace containing the divisor in `ws.d1`.
 """
-function has_rank_at_least_r!(g::ChipFiringGraph, r::Int, ws::Workspace)
+function has_rank_at_least_r!(G::ChipFiringGraph, r::Int, ws::Workspace)
     divisor = ws.d1
     if r == 1
-        for v in 1:g.num_vertices
+        for v in 1:G.num_vertices
             divisor[v] -= r
-            winnable = is_winnable!(g, divisor, ws)
+            winnable = is_winnable!(G, divisor, ws)
             divisor[v] += r # Always restore state
             if !winnable
                 return false
             end
         end
     else
-        n = g.num_vertices
+        n = G.num_vertices
         
         # 1. Pre-allocate the vector just ONCE.
         div_chips = zeros(Int, n)
@@ -355,7 +354,7 @@ function has_rank_at_least_r!(g::ChipFiringGraph, r::Int, ws::Workspace)
         keep_going = true
         while keep_going
             divisor .-= div_chips
-            winnable = is_winnable!(g, divisor, ws)
+            winnable = is_winnable!(G, divisor, ws)
             divisor .+= div_chips # Always restore state
             if !winnable
                 return false
@@ -368,31 +367,41 @@ function has_rank_at_least_r!(g::ChipFiringGraph, r::Int, ws::Workspace)
 end
 
 """
-    has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int) -> Bool
-Given a ChipFiringGraph `g` and Divisor `d`, returns a boolean determining whether or not `d` has rank at least
-`r`. 
+    has_rank_at_least_r(G::ChipFiringGraph, D::Divisor, r::Int) -> Bool
+
+Given a ChipFiringGraph ``G`` and Divisor ``D``, returns a boolean determining whether or not ``D`` has rank at least
+``r``. 
+
+# Arguments
+    - `G::ChipFiringGraph`: The graph to analyze.
+    - `D::Divisor`: The divisor to check.
+    - `r::Int`: The minimum rank to check for.
 """
-function has_rank_at_least_r(g::ChipFiringGraph, d::Divisor, r::Int)
-    ws = Workspace(g.num_vertices)
-    ws.d1 .= d
-    return has_rank_at_least_r!(g, r, ws)
+function has_rank_at_least_r(G::ChipFiringGraph, D::Divisor, r::Int)
+    ws = Workspace(G.num_vertices)
+    ws.d1 .= D
+    return has_rank_at_least_r!(G, r, ws)
 end
 
 """
-    divisor_rank(g::ChipFiringGraph, d::Divisor) -> Int
+    divisor_rank(G::ChipFiringGraph, D::Divisor) -> Int
 
-Given a ChipFiringGraph `g` and Divisor `d`, returns the rank (in the sense of Baker and Norine) of `d` on `g`.
+Returns the rank (in the sense of Baker and Norine) of a divisor ``D``.
 See Divisors and Sandpiles by Corry and Perkinson. This is a convenience wrapper.
+
+# Arguments
+- `G::ChipFiringGraph`: The graph to analyze.
+- `D::Divisor`: The divisor whose rank is to be computed.
 """
-function divisor_rank(g::ChipFiringGraph, d::Divisor)
-    ws = Workspace(g.num_vertices)
-    if !is_winnable!(g, d, ws)
+function divisor_rank(G::ChipFiringGraph, D::Divisor)
+    ws = Workspace(G.num_vertices)
+    if !is_winnable!(G, D, ws)
         return -1
     else
-        ws.d1 .= d
+        ws.d1 .= D
         rank = 1
         while true
-            if !has_rank_at_least_r!(g, rank, ws)
+            if !has_rank_at_least_r!(G, rank, ws)
                 return rank - 1
             end
             rank += 1
@@ -401,13 +410,18 @@ function divisor_rank(g::ChipFiringGraph, d::Divisor)
 end
 
 """
-    is_equivalent(g::ChipFiringGraph, d1::Divisor, d2::Divisor) -> Bool
+    is_equivalent(G::ChipFiringGraph, D1::Divisor, D2::Divisor) -> Bool
 
 Tests if two divisors are equivalent under chip-firing.
+
+# Arguments
+    - `G::ChipFiringGraph`: The graph to analyze.
+    - `D1::Divisor`: The first divisor.
+    - `D2::Divisor`: The second divisor.
 """
-function is_equivalent(g::ChipFiringGraph, d1::Divisor, d2::Divisor)
-    q1_red = q_reduced(g, d1, 1)
-    q2_red = q_reduced(g, d2, 1)
+function is_equivalent(G::ChipFiringGraph, D1::Divisor, D2::Divisor)
+    q1_red = q_reduced(G, D1, 1)
+    q2_red = q_reduced(G, D2, 1)
 
     return q1_red == q2_red
 end
