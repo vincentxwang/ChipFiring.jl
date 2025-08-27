@@ -107,11 +107,11 @@ struct ChipFiringGraph
 end
 
 """
-    show(io::IO, g::ChipFiringGraph)
+    Base.show(io::IO, g::ChipFiringGraph)
 
 Defines the text representation of a `ChipFiringGraph`.
 """
-function show(io::IO, g::ChipFiringGraph)
+function Base.show(io::IO, g::ChipFiringGraph)
     edge_strs = [string(e) for e in g.edge_list]
     print(io, "Graph(V=$(g.num_vertices), E=$(g.num_edges), Edges=[$(join(edge_strs, ", "))])")
 end

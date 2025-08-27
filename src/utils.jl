@@ -62,6 +62,9 @@ graphs, including the 1, 4, and 8-byte encodings for the number of vertices.
 # Throws
 - `ArgumentError`: If the string is malformed, contains invalid characters, or
   ends unexpectedly.
+
+# WARNING:
+The backslash `\` is a valid character in the graph6 format, but needs to be escaped in Julia.
 """
 function parse_graph6(g6_string::String)
     # step 1: sanitization and validation
