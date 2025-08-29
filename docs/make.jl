@@ -12,6 +12,7 @@ makedocs(;
         "Home" => "index.md",
         "Background and conventions" => "bg.md",
         "Reference" => "api.md",
+        "Examples" => "examples.md",
     ],
 )
 
