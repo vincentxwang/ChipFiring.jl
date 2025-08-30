@@ -1,7 +1,7 @@
 name = "ChipFiring"
 uuid = "be096eff-6f16-4fe8-bf2d-b0d7a78a4be0"
 authors = ["Vincent Wang <vincentxwang@uchicago.edu>"]
-version = "0.3.1"
+version = "0.3.2"
 
 [compat]
 julia = "1.6"
