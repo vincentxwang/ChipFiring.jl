@@ -4,7 +4,7 @@ CurrentModule = ChipFiring
 
 # ChipFiring
 
-Documentation for [ChipFiring](https://github.com/vincentxwang/ChipFiring.jl).
+Documentation for [ChipFiring.jl](https://github.com/vincentxwang/ChipFiring.jl).
 
 ```@index
 ```

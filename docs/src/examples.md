@@ -1,6 +1,6 @@
 # Examples
 
-Below are some self-contained examples of the code in [ChipFiring](https://github.com/vincentxwang/ChipFiring.jl).
+Below are some self-contained examples of the code in [ChipFiring.jl](https://github.com/vincentxwang/ChipFiring.jl).
 
 
 # 1 Graph construction
@@ -57,13 +57,13 @@ icosahedron_adj_matrix =[
 
 g = ChipFiringGraph(icosahedron_adj_matrix)
 
-# Compute the gonality of an icosahedron to be 9.
+# Compute the gonality of an icosahedron to be 9
 compute_gonality(g)
 
-# We can also specify ranks for `compute_gonality` to compute.
+# We can also specify ranks for `compute_gonality` to compute
 compute_gonality(g, min_d=7, max_d=10)
 
-# If the function finds that the gonality is greater than `max_d`, it will return `-1`.
+# If the function finds that the gonality is greater than `max_d`, then it will return `-1`
 compute_gonality(g, min_d=6, max_d=8)
 
 # Verbose mode that prints a winning divisor.

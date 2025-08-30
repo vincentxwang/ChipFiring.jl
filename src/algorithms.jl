@@ -15,7 +15,7 @@ Computes the `r`-th (default: `1`) gonality of a graph ``G``.
 # Returns
 - `Int`: The computed gonality of the graph. Returns ``-1`` if not found within `max_d`.
 
-Note: The result of `compute_gonality`` may return ``r \\cdot n`` in the case when `max_d` is set to ``r \\cdot n - 1``.
+Note: The result may be inaccurate if `min_d` is set above the gonality of a graph.
 """
 function compute_gonality(G::ChipFiringGraph; min_d=1, max_d=nothing, verbose=false, r=1)
     n = G.num_vertices
@@ -81,7 +81,7 @@ is super-stable with respect to ``q``.
 - `G::ChipFiringGraph`: The graph structure.
 - `D::Divisor`: Input divisor.
 - `q::Int`: The vertex (1-indexed) from which to start the burn.
-- `ws::Workspace`: The following fields are read from `ws`: `ws.burned`, `ws.legals`, `ws.threats`
+- `ws::Workspace`: Any workspace.
 
 # Returns
 - `is_superstable::Bool`: `true` if the entire graph was burned.
@@ -173,16 +173,20 @@ Finds the equivalent ``q``-reduced effective divisor to ``D``.
 - `G::ChipFiringGraph`: The graph structure.
 - `D::Divisor`: The initial chip configuration.
 - `q::Int`: The sink vertex.
-- `ws::Workspace`: The workspace containing pre-allocated arrays.
+- `ws::Workspace`: Any workspace.
 
 # Returns
 - `d::Divisor`: The resulting divisor
 
 # Modifies
 - `ws.d2`: Uses this space to construct the resulting divisor
+- `ws.burned`: Modified by `dhar!`.
+- `ws.legals`: Modified by `dhar!`.
+- `ws.threats`: Modified by `dhar!`.
 """
 function q_reduced!(G::ChipFiringGraph, D::Divisor, q::Int, ws::Workspace)
 
+    # work in ws.d2 instead
     d = ws.d2
     d .= D
 
@@ -253,6 +257,17 @@ end
 
 Checks if a divisor ``D`` is linearly equivalent to an
 effective divisor using a version of Dhar's burning algorithm.
+
+# Arguments
+- `G::ChipFiringGraph`: The graph structure.
+- `D::Divisor`: The initial chip configuration.
+- `ws::Workspace`: Any workspace.
+
+# Modifies
+- `ws.d2`: Modified by `q_reduced!`.
+- `ws.burned`: Modified by `dhar!`.
+- `ws.legals`: Modified by `dhar!`.
+- `ws.threats`: Modified by `dhar!`.
 """
 function is_winnable!(G::ChipFiringGraph, D::Divisor, ws::Workspace)
     q = 1 # can really set to anything. 1 arbitrary
@@ -330,6 +345,12 @@ Checks if a divisor `ws.d1` has rank at least ``r``.
 - `G::ChipFiringGraph`: The graph structure.
 - `r::Int`: The minimum rank to check for.
 - `ws::Workspace`: Workspace containing the divisor in `ws.d1`.
+
+# Modifies
+- `ws.d2`: Modified by `q_reduced!`
+- `ws.burned`: Modified by `dhar!`
+- `ws.legals`: Modified by `dhar!`
+- `ws.threats`: Modified by `dhar!`
 """
 function has_rank_at_least_r!(G::ChipFiringGraph, r::Int, ws::Workspace)
     divisor = ws.d1

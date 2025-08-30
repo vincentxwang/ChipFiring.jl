@@ -1,9 +1,9 @@
 # ChipFiring.jl
 
-[ChipFiring.jl](https://github.com/vincentxwang/ChipFiring.jl) is a Julia package for analyzing chip-firing games on graphs. The codes are roughly based on the algorithms given in *Sandpiles and Divisors: An Introduction to Chip-Firing* by Corry and Perkinson (2018). A key objective is for the package to be useful for both researchers and students. The package is built around a two-tier API design: a simple layer for interactive use, and a high-performance layer for intensive computations. Its features include:
+[ChipFiring.jl](https://github.com/vincentxwang/ChipFiring.jl) is a Julia package for analyzing chip-firing games on graphs. The codes are roughly based on the algorithms given in *Sandpiles and Divisors: An Introduction to Chip-Firing* by Corry and Perkinson (2018). A key objective is for the package to be useful for both researchers and students. Its features include:
 
 - Basic operations on chip-firing graphs (e.g. firing, lending)
-- Computations of $r$-th graph gonality
+- (Thread-safe) computations of $r$-th graph gonality
 - Uniform subdivisions of graphs
 - Rank computations
 - q-reduction, Dhar's burning algorithm, and equivalence
@@ -52,6 +52,8 @@ Divisor([1, 1, 1, 1])
 julia> q_reduced(g, d, 1)
 Divisor([-4, 1, 1, 0])
 ```
+
+More examples can be found in the [docs](https://vincentxwang.github.io/ChipFiring.jl/stable/examples).
 
 # Acknowledgements
 

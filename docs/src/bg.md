@@ -1,5 +1,7 @@
 # Background and conventions
 
+# Graphs and divisors
+
 We take a graph to be with multi-edges, connected, and no self-loops. We label the vertices $\{1, \dots, n\}$. The valence of a vertex $v$ is the number of edges incident to $v$.
 
 A `ChipFiringGraph` encodes the graph structure. It can be constructed through either a multiplicity matrix or an edge list.
