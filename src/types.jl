@@ -127,9 +127,9 @@ Graphs.nv(g::ChipFiringGraph) = g.num_vertices
 Graphs.is_directed(::ChipFiringGraph) = false
 Graphs.is_directed(::Type{ChipFiringGraph}) = false
 Graphs.has_edge(g::ChipFiringGraph, s, d) = g.adj_matrix[s, d] > 0
-Graphs.neighbors(g::ChipFiringGraph, v) = g.adj_list[v]
-Graphs.outneighbors(g::ChipFiringGraph, v::Integer) = g.adj_list[v]
-Graphs.inneighbors(g::ChipFiringGraph, v::Integer) = g.adj_list[v]
+Graphs.neighbors(g::ChipFiringGraph, v::Int) = g.adj_list[v]
+Graphs.outneighbors(g::ChipFiringGraph, v::Int) = g.adj_list[v]
+Graphs.inneighbors(g::ChipFiringGraph, v::Int) = g.adj_list[v]
 Graphs.weights(g::ChipFiringGraph) = g.adj_matrix
 
 

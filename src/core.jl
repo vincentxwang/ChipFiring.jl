@@ -57,15 +57,6 @@ function borrow!(G::ChipFiringGraph, D::Divisor, vertices::Vector{Int})
 end
 
 """
-    neighbors(G::ChipFiringGraph, v::Int) -> Vector{Int}
-
-Returns a vector containing the indices of the neighbors of vertex ``v``.
-"""
-function neighbors(G::ChipFiringGraph, v::Int)
-    return G.adj_list[v]
-end
-
-"""
     get_num_edges(G::ChipFiringGraph, u::Int, v::Int) -> Int
 
 Returns the number of edges (multiplicity) between two vertices ``u`` and ``v``.
@@ -102,8 +93,6 @@ Checks if a divisor ``D`` is effective, meaning all its chip counts are non-nega
 function is_effective(D::Divisor)
     return all(x -> x >= 0, D)
 end
-
-
 
 """
     compute_genus(G::ChipFiringGraph) -> Int

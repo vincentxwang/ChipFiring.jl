@@ -1,4 +1,5 @@
 [deps]
 ChipFiring = "be096eff-6f16-4fe8-bf2d-b0d7a78a4be0"
 Coverage = "a2441757-f6aa-5fb2-8edb-039e3f45d037"
+Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
