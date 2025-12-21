@@ -28,6 +28,8 @@ Graph(V=4, E=5, Edges=[(1, 2), (1, 2), (1, 4), (2, 3), (3, 4)])
 julia> g = ChipFiringGraph(4, edge_list)
 ```
 
+The `ChipFiringGraph` implements `AbstractGraph` from [Graphs.jl](https://github.com/JuliaGraphs/Graphs.jl). 
+
 A `Divisor` encodes a divisor on a graph. However, it is a distinct object from a `ChipFiringGraph`  and for all practical purposes, it will act like a vector, where the $i$-th index corresponds to the number of chips on vertex $i$.
 
 ```julia-repl
