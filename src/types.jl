@@ -1,4 +1,5 @@
 import Base: getindex, setindex!, length, iterate, eltype, ==, ≤, <, ≥, >, Broadcast
+using Graphs
 
 """
     ChipFiringGraph
@@ -26,7 +27,7 @@ be undirected, connected, and with no self-loops.
 - `ChipFiringGraph(num_vertices::Int, edge_list::Vector{Tuple{Int, Int}})`: Constructs
   a `ChipFiringGraph` from a list of edges and the total number of vertices.
 """
-struct ChipFiringGraph
+struct ChipFiringGraph <: AbstractGraph{Int}
     
     adj_matrix::Matrix{Int}
     num_vertices::Int
@@ -115,6 +116,22 @@ function Base.show(io::IO, g::ChipFiringGraph)
     edge_strs = [string(e) for e in g.edge_list]
     print(io, "Graph(V=$(g.num_vertices), E=$(g.num_edges), Edges=[$(join(edge_strs, ", "))])")
 end
+
+# Implementating AbstractGraph{Int}
+Graphs.vertices(g::ChipFiringGraph) = 1:g.num_vertices
+# IMPORTANT: Graphs.edges implementation ignores multiplicity
+Graphs.edges(g::ChipFiringGraph) = [Graphs.Edge(u, v) for (u, v) in g.edge_list]
+Graphs.edgetype(g::ChipFiringGraph) = Graphs.SimpleEdge{Int}
+Graphs.ne(g::ChipFiringGraph) = g.num_edges # Total edges with multiplicity
+Graphs.nv(g::ChipFiringGraph) = g.num_vertices
+Graphs.is_directed(::ChipFiringGraph) = false
+Graphs.is_directed(::Type{ChipFiringGraph}) = false
+Graphs.has_edge(g::ChipFiringGraph, s, d) = g.adj_matrix[s, d] > 0
+Graphs.neighbors(g::ChipFiringGraph, v::Int) = g.adj_list[v]
+Graphs.outneighbors(g::ChipFiringGraph, v::Int) = g.adj_list[v]
+Graphs.inneighbors(g::ChipFiringGraph, v::Int) = g.adj_list[v]
+Graphs.weights(g::ChipFiringGraph) = g.adj_matrix
+
 
 """
     Divisor <: AbstractVector{Int}

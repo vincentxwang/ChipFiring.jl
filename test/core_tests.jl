@@ -1,5 +1,6 @@
 using ChipFiring
 using Test
+using Graphs
 
 @testset "ChipFiring.jl core Tests" begin
 
@@ -431,5 +432,40 @@ end
         @test is_effective(Divisor([0, 5, 1])) == true
         @test is_effective(Divisor([1, -2, 3])) == false
         @test is_effective(Divisor([0,0,0,0])) == true
+    end
+end
+
+@testset "abstractgraph tests" begin
+
+    # C3 graph
+    adj_mat_simple = [0 1 1; 1 0 1; 1 1 0]
+    g_simple = ChipFiringGraph(adj_mat_simple)
+
+    @testset "C3" begin
+        @test Graphs.nv(g_simple) == 3
+        @test Graphs.ne(g_simple) == 3
+        @test collect(Graphs.vertices(g_simple)) == [1, 2, 3]
+        @test Graphs.edgetype(g_simple) == Graphs.SimpleEdge{Int}
+        @test !Graphs.is_directed(g_simple)
+        @test !Graphs.is_directed(ChipFiringGraph)
+
+        # Check has_edge
+        @test Graphs.has_edge(g_simple, 1, 2)
+        @test Graphs.has_edge(g_simple, 2, 3)
+        @test !Graphs.has_edge(g_simple, 1, 1) # No self loops allowed in constructor usually, checking generic logic
+
+        # Check neighbor accessors
+        # neighbors, inneighbors, and outneighbors should be identical for undirected graphs
+        for v in 1:3
+            nbs = Graphs.neighbors(g_simple, v)
+            in_nbs = Graphs.inneighbors(g_simple, v)
+            out_nbs = Graphs.outneighbors(g_simple, v)
+            
+            @test nbs == in_nbs == out_nbs
+            @test length(nbs) == 2 # In a triangle, every node has degree 2
+        end
+
+        # Verify specific neighbors
+        @test sort(Graphs.neighbors(g_simple, 1)) == [2, 3]
     end
 end
